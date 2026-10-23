@@ -702,13 +702,32 @@
         }
 
         function updateDailyEffortScore() {
+            // Clean and sanitize numbers (remove floating decimals and handle string parsing)
+            const rawSteps = parseFloat(state.dailyStats.steps) || 0;
+            const rawCal = parseFloat(state.dailyStats.activeCalories) || 0;
+            let rawSleep = parseFloat(state.dailyStats.sleepHours) || 0;
+            
+            // If sleep is provided in seconds (> 24), automatically convert to hours
+            if (rawSleep > 24) {
+                rawSleep = rawSleep / 3600;
+            }
+
+            const cleanSteps = Math.round(rawSteps);
+            const cleanCal = Math.round(rawCal);
+            const cleanSleep = Number(rawSleep.toFixed(1));
+
+            // Sync cleaned numbers back to state
+            state.dailyStats.steps = cleanSteps;
+            state.dailyStats.activeCalories = cleanCal;
+            state.dailyStats.sleepHours = cleanSleep;
+
             // Effort formula based on 3 pillars:
             // 1. Steps (target 10,000) -> 40%
             // 2. Active Calories (target 650) -> 40%
             // 3. Sleep (target 7.5 hrs) -> 20%
-            const stepScore = Math.min(1.2, state.dailyStats.steps / 10000) * 40;
-            const calScore = Math.min(1.2, state.dailyStats.activeCalories / 650) * 40;
-            const sleepScore = Math.min(1.0, state.dailyStats.sleepHours / 7.5) * 20;
+            const stepScore = Math.min(1.2, cleanSteps / 10000) * 40;
+            const calScore = Math.min(1.2, cleanCal / 650) * 40;
+            const sleepScore = Math.min(1.0, cleanSleep / 7.5) * 20;
 
             const totalScore = Math.min(100, Math.round(stepScore + calScore + sleepScore));
 
@@ -732,24 +751,25 @@
                 badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-neonAmber/20 text-neonAmber border border-neonAmber/30";
             }
 
-            // Steps display
-            document.getElementById('stepsCountDisplay').textContent = state.dailyStats.steps.toLocaleString();
-            const stepPct = Math.min(100, Math.round((state.dailyStats.steps / 10000) * 100));
+            // Steps display (formatted with commas e.g. 8,734)
+            document.getElementById('stepsCountDisplay').textContent = cleanSteps.toLocaleString('en-US');
+            const stepPct = Math.min(100, Math.round((cleanSteps / 10000) * 100));
             document.getElementById('stepsProgressBar').style.width = `${stepPct}%`;
-            document.getElementById('distanceDisplay').textContent = `${(state.dailyStats.steps * 0.00075).toFixed(1)} كم`;
+            document.getElementById('distanceDisplay').textContent = `${(cleanSteps * 0.00075).toFixed(1)} كم`;
 
-            // Calories display
-            document.getElementById('activeCaloriesDisplay').textContent = state.dailyStats.activeCalories;
-            const totalBurn = state.bmr + state.dailyStats.activeCalories;
-            document.getElementById('totalBurnDisplay').textContent = `${totalBurn.toLocaleString()} سعرة`;
+            // Calories display (neat integer e.g. 650)
+            document.getElementById('activeCaloriesDisplay').textContent = cleanCal.toLocaleString('en-US');
+            const bmr = Number(state.bmr) || 2120;
+            const totalBurn = bmr + cleanCal;
+            document.getElementById('totalBurnDisplay').textContent = `${totalBurn.toLocaleString('en-US')} سعرة`;
 
-            // Sleep display
-            document.getElementById('sleepHoursDisplay').textContent = state.dailyStats.sleepHours;
+            // Sleep display (clean decimal e.g. 7.5 or 8.0)
+            document.getElementById('sleepHoursDisplay').textContent = cleanSleep;
             const sleepBadge = document.getElementById('sleepQualityBadge');
-            if (state.dailyStats.sleepHours >= 7.0) {
+            if (cleanSleep >= 7.0) {
                 sleepBadge.textContent = "ممتاز (استشفاء عضلي)";
                 sleepBadge.className = "text-neonGreen font-bold bg-neonGreen/10 px-2 py-0.5 rounded";
-            } else if (state.dailyStats.sleepHours >= 5.5) {
+            } else if (cleanSleep >= 5.5) {
                 sleepBadge.textContent = "متوسط (احرص على الراحة)";
                 sleepBadge.className = "text-neonAmber font-bold bg-neonAmber/10 px-2 py-0.5 rounded";
             } else {
@@ -970,24 +990,35 @@
                 const response = await fetch('./data.json?t=' + Date.now());
                 if (response.ok) {
                     const cloud = await response.json();
-                    if (cloud.steps) state.dailyStats.steps = cloud.steps;
-                    if (cloud.calories) state.dailyStats.activeCalories = cloud.calories;
-                    if (cloud.sleep) state.dailyStats.sleepHours = cloud.sleep;
-                    if (cloud.weight) {
-                        state.currentWeight = parseFloat(cloud.weight);
-                        const lastEntry = state.weighIns[state.weighIns.length - 1];
-                        if (!lastEntry || Math.abs(lastEntry.weight - state.currentWeight) > 0.05) {
-                            state.weighIns.push({
-                                date: cloud.date || `أسبوع ${state.weighIns.length}`,
-                                weight: state.currentWeight
-                            });
+                    if (cloud.steps !== undefined && cloud.steps !== '') {
+                        state.dailyStats.steps = Math.round(parseFloat(cloud.steps)) || 0;
+                    }
+                    if (cloud.calories !== undefined && cloud.calories !== '') {
+                        state.dailyStats.activeCalories = Math.round(parseFloat(cloud.calories)) || 0;
+                    }
+                    if (cloud.sleep !== undefined && cloud.sleep !== '') {
+                        let s = parseFloat(cloud.sleep) || 0;
+                        if (s > 24) s = s / 3600; // Auto convert seconds to hours
+                        state.dailyStats.sleepHours = Number(s.toFixed(1));
+                    }
+                    if (cloud.weight !== undefined && cloud.weight !== '') {
+                        const w = parseFloat(cloud.weight);
+                        if (!isNaN(w) && w > 0) {
+                            state.currentWeight = Number(w.toFixed(1));
+                            const lastEntry = state.weighIns[state.weighIns.length - 1];
+                            if (!lastEntry || Math.abs(lastEntry.weight - state.currentWeight) > 0.05) {
+                                state.weighIns.push({
+                                    date: cloud.date ? cloud.date.split(' at ')[0] : `أسبوع ${state.weighIns.length}`,
+                                    weight: state.currentWeight
+                                });
+                            }
                         }
                     }
                     saveState();
                     updateWeightAndProgress();
                     updateDailyEffortScore();
                     initChart();
-                    showToast('تمت المزامنة الذاتية من الساعة وسحابة GitHub! ☁️⚡');
+                    showToast('تمت المزامنة وتنسيق البيانات بأناقة! ☁️⚡');
                 }
             } catch (err) {
                 console.log('Running in local mode, data.json not loaded yet.');
