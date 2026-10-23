@@ -257,7 +257,7 @@
                     </div>
                     <div class="flex justify-between text-[11px] text-gray-400 mt-1.5 font-bold">
                         <span>المسافة: <span id="distanceDisplay" class="text-gray-200">8.2 كم</span></span>
-                        <span class="text-neonCyan">114% منجز</span>
+                        <span id="stepsPctDisplay" class="text-neonCyan">114% منجز</span>
                     </div>
                 </div>
             </div>
@@ -670,12 +670,12 @@
         function calculateEstimatedDays() {
             // Realistic math:
             // Remaining kg * 7700 kcal = remaining calorie deficit needed.
-            // With daily activity burn (active ~700 kcal + moderate intuitive reduction ~300 kcal = ~1000 kcal deficit / day or ~0.8kg per week).
-            const lastWeight = state.weighIns.length > 0 ? state.weighIns[state.weighIns.length - 1].weight : state.currentWeight;
+            const lastWeight = state.weighIns.length > 0 ? parseFloat(state.weighIns[state.weighIns.length - 1].weight) : parseFloat(state.currentWeight);
             const remainingKg = Math.max(0, lastWeight - state.targetWeight);
             
-            // Average safe daily deficit estimated at 800-900 kcal
-            const dailyDeficitEstimate = Math.max(500, state.dailyStats.activeCalories + 150);
+            // Clean active calories and cap daily deficit to realistic physiological bounds (600 - 1350 kcal/day)
+            const activeCal = Math.min(2000, Math.max(200, parseFloat(state.dailyStats.activeCalories) || 700));
+            const dailyDeficitEstimate = Math.min(1350, Math.max(600, activeCal + 150));
             const daysNeeded = Math.round((remainingKg * 7700) / dailyDeficitEstimate);
 
             document.getElementById('estimatedDaysDisplay').textContent = `~${daysNeeded} يوم (لو التزمت)`;
@@ -753,8 +753,11 @@
 
             // Steps display (formatted with commas e.g. 8,734)
             document.getElementById('stepsCountDisplay').textContent = cleanSteps.toLocaleString('en-US');
-            const stepPct = Math.min(100, Math.round((cleanSteps / 10000) * 100));
+            const rawStepPct = Math.round((cleanSteps / 10000) * 100);
+            const stepPct = Math.min(100, rawStepPct);
             document.getElementById('stepsProgressBar').style.width = `${stepPct}%`;
+            const pctEl = document.getElementById('stepsPctDisplay');
+            if (pctEl) pctEl.textContent = `${rawStepPct}% منجز`;
             document.getElementById('distanceDisplay').textContent = `${(cleanSteps * 0.00075).toFixed(1)} كم`;
 
             // Calories display (neat integer e.g. 650)
@@ -1014,9 +1017,9 @@
                             }
                         }
                     }
-                    saveState();
-                    updateWeightAndProgress();
                     updateDailyEffortScore();
+                    updateWeightAndProgress();
+                    saveState();
                     initChart();
                     showToast('تمت المزامنة وتنسيق البيانات بأناقة! ☁️⚡');
                 }
@@ -1027,17 +1030,16 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
-            fetchCloudData();
-            loadState();
             updateDateHeader();
             updateFridayCountdown();
             setInterval(updateFridayCountdown, 60000); // refresh timer every minute
-            updateWeightAndProgress();
             updateDailyEffortScore();
+            updateWeightAndProgress();
             updateWaterUI();
             updateAthkarUI();
             initChart();
             setupEvents();
+            fetchCloudData();
         });
     </script>
 </body>
