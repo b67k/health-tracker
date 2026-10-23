@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مسار الـ 85 | لوحة التحكم الذكية</title>
+    
+    <!-- خطوط جوجل ومكتبة Tailwind -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,92 +22,16 @@
             }
         }
     </script>
-    <style>
-        :root[data-theme="cyber"] {
-            --bg-main: #060911;
-            --bg-card: rgba(15, 22, 38, 0.9);
-            --border-card: rgba(96, 239, 255, 0.22);
-            --accent-2: #60EFFF;
-            --radius-card: 16px;
-            --card-shadow: 0 0 30px -8px rgba(96, 239, 255, 0.2);
-            --bg-pattern: radial-gradient(circle at 15% 15%, rgba(96, 239, 255, 0.1) 0%, transparent 40%),
-                          radial-gradient(circle at 85% 10%, rgba(255, 0, 122, 0.1) 0%, transparent 40%),
-                          linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-                          linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            --bg-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
-        }
 
-        :root[data-theme="glass"] {
-            --bg-main: #0B0F17;
-            --bg-card: rgba(255, 255, 255, 0.045);
-            --border-card: rgba(255, 255, 255, 0.12);
-            --accent-2: #38BDF8;
-            --radius-card: 28px;
-            --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-            --bg-pattern: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.16) 0px, transparent 50%),
-                          radial-gradient(at 100% 20%, rgba(244, 114, 182, 0.15) 0px, transparent 50%),
-                          radial-gradient(at 50% 100%, rgba(52, 211, 153, 0.12) 0px, transparent 50%);
-            --bg-size: cover;
-        }
+    <!-- ملف التنسيقات الخارجي -->
+    <link rel="stylesheet" href="css/styles.css">
 
-        :root[data-theme="obsidian"] {
-            --bg-main: #09090B;
-            --bg-card: #121215;
-            --border-card: rgba(212, 175, 55, 0.25);
-            --accent-2: #F59E0B;
-            --radius-card: 12px;
-            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
-            --bg-pattern: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08), transparent 60%);
-            --bg-size: cover;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-main);
-            background-image: var(--bg-pattern);
-            background-size: var(--bg-size);
-            background-attachment: fixed;
-            color: #F8FAFC;
-            transition: background-color 0.4s ease;
-        }
-
-        .smart-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: var(--radius-card);
-            box-shadow: var(--card-shadow);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .smart-card:hover {
-            border-color: var(--accent-2);
-        }
-
-        @keyframes waveMove1 {
-            0% { transform: translateX(0); }
-            50% { transform: translateX(-25%); }
-            100% { transform: translateX(0); }
-        }
-        .wave-1 { animation: waveMove1 4s ease-in-out infinite; }
-
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 122, 0.4); }
-            50% { box-shadow: 0 0 28px rgba(255, 0, 122, 0.85); }
-        }
-        .active-burn-cell { animation: pulseGlow 2s infinite ease-in-out; }
-
-        .ring-progress {
-            transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-        }
-    </style>
+    <!-- مكتبة Supabase عبر CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="min-h-screen p-3 sm:p-6 lg:p-8">
 
-    <!-- Top Theme Switcher & Cloud Status Bar -->
+    <!-- شريط الثيمات وحالة المزامنة السحابية -->
     <div class="max-w-7xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-3 bg-black/50 backdrop-blur-xl px-4 py-2.5 rounded-2xl border border-white/10">
         <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-gray-400">العينة البصرية:</span>
@@ -119,15 +45,12 @@
         <div class="flex items-center gap-3">
             <div id="syncStatusBadge" class="flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                <span id="syncStatusText">وضع محلي</span>
+                <span id="syncStatusText">جاري الاتصال...</span>
             </div>
-            <button id="openCloudModalBtn" class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white flex items-center gap-1.5 transition-all">
-                <span>☁️ إعدادات Sync الجوالات</span>
-            </button>
         </div>
     </div>
 
-    <!-- Main Header -->
+    <!-- رأس الصفحة الرئيسي (Header) -->
     <header class="max-w-7xl mx-auto mb-6 smart-card p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-4">
             <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 via-cyan-400 to-blue-600 p-0.5 shadow-lg">
@@ -160,7 +83,7 @@
 
     <main class="max-w-7xl mx-auto space-y-6">
 
-        <!-- 1. Synced Tasbih Bar -->
+        <!-- 1. شريط المسبحة الإلكترونية -->
         <section class="smart-card p-5 relative overflow-hidden">
             <div class="flex flex-col lg:flex-row items-center justify-between gap-5">
                 <div class="flex items-center gap-4 w-full lg:w-auto">
@@ -194,168 +117,88 @@
             </div>
         </section>
 
-        <!-- 2. THE 4-MODE VISUAL ENGINE + WATER TANK -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 smart-card p-5 sm:p-6 flex flex-col justify-between">
-                <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
-                    <div>
+        <!-- 2. مفاعل الترطيب (Water Reactor) -->
+        <section class="smart-card p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="text-lg font-black text-white">مفاعل الترطيب 💧</h3>
+                    <p class="text-xs text-gray-400">تحكم حر كامل في الزيادة والنقصان • متزامن سحابياً</p>
+                </div>
+                <span id="waterPercentageDisplay" class="text-sm font-black font-outfit px-3 py-1 rounded-xl bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">0%</span>
+            </div>
+
+            <div class="my-6 flex flex-col sm:flex-row items-center gap-6 justify-center">
+                <div class="relative w-28 h-48 bg-black/60 rounded-3xl border-2 border-cyan-400/40 overflow-hidden shadow-inner shrink-0">
+                    <div class="absolute inset-y-0 right-2 flex flex-col justify-between py-3 z-20 pointer-events-none text-[9px] font-outfit text-cyan-200/50 font-bold">
+                        <span>3.5L</span><span>2.5L</span><span>1.5L</span><span>0.5L</span>
+                    </div>
+                    <div id="waterLevelBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-300 transition-all duration-700 flex items-center justify-center" style="height: 0%;">
+                        <svg class="absolute -top-4 left-0 w-[200%] h-5 wave-1 fill-cyan-300/80" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+                        </svg>
+                        <span id="waterLitersText" class="relative z-20 text-xs font-black font-outfit text-slate-950 bg-white/85 px-2.5 py-0.5 rounded-full shadow">0.00 L</span>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full space-y-4">
+                    <div class="bg-black/40 p-3 rounded-2xl border border-white/10 flex items-center justify-between gap-2">
+                        <span class="text-xs text-gray-400 font-bold">التحكم بالأكواب:</span>
                         <div class="flex items-center gap-2">
-                            <h2 class="text-lg sm:text-xl font-black text-white">محرك تتبع الكتلة التفاعلي</h2>
-                            <span id="fridayCountdown" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-outfit">...</span>
-            <!-- Fully Controllable 3D Liquid Water Reactor -->
-            <div class="smart-card p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-black text-white">مفاعل الترطيب 💧</h3>
-                        <p class="text-xs text-gray-400">تحكم حر كامل في الزيادة والنقصان • متزامن سحابياً</p>
-                    </div>
-                    <span id="waterPercentageDisplay" class="text-sm font-black font-outfit px-3 py-1 rounded-xl bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">0%</span>
-                </div>
-
-                <div class="my-4 flex items-center gap-5 justify-center">
-                    <div class="relative w-28 h-48 bg-black/60 rounded-3xl border-2 border-cyan-400/40 overflow-hidden shadow-inner shrink-0">
-                        <div class="absolute inset-y-0 right-2 flex flex-col justify-between py-3 z-20 pointer-events-none text-[9px] font-outfit text-cyan-200/50 font-bold">
-                            <span>3.5L</span><span>2.5L</span><span>1.5L</span><span>0.5L</span>
-                        </div>
-                        <div id="waterLevelBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-300 transition-all duration-700 flex items-center justify-center" style="height: 0%;">
-                            <svg class="absolute -top-4 left-0 w-[200%] h-5 wave-1 fill-cyan-300/80" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
-                            </svg>
-                            <span id="waterLitersText" class="relative z-20 text-xs font-black font-outfit text-slate-950 bg-white/85 px-2.5 py-0.5 rounded-full shadow">0.00 L</span>
+                            <button type="button" id="stepperMinusBtn" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-rose-500/20 text-gray-200 hover:text-rose-300 font-black text-sm active:scale-90 transition-all flex items-center justify-center select-none">-</button>
+                            <button type="button" id="stepperPlusBtn" class="w-9 h-9 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-sm active:scale-90 transition-all flex items-center justify-center shadow select-none">+</button>
                         </div>
                     </div>
 
-                    <div class="flex-1 space-y-3">
-                        <div>
-                            <div class="text-[11px] font-bold text-gray-400 mb-1.5">اضغط على أي رقم لتحديده أو إلغائه:</div>
-                            <div id="cupsGridContainer" class="grid grid-cols-7 gap-1.5"></div>
-                        </div>
-
-                        <!-- Stepper & Direct Editable Input -->
-                        <div class="bg-black/40 p-2.5 rounded-2xl border border-white/10 flex items-center justify-between gap-2">
-                            <span class="text-xs text-gray-400 font-bold">عدد الأكواب:</span>
-                            <div class="flex items-center gap-1.5">
-                                <button type="button" id="stepperMinusBtn" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-500/20 text-gray-200 hover:text-rose-300 font-black text-sm active:scale-90 transition-all flex items-center justify-center select-none">-</button>
-                                <input type="number" id="directCupsInput" min="0" max="30" value="0" class="w-12 text-center bg-black/60 border border-white/20 focus:border-cyan-400 text-cyan-300 font-outfit font-black text-sm py-1 rounded-xl outline-none">
-                                <button type="button" id="stepperPlusBtn" class="w-8 h-8 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-sm active:scale-90 transition-all flex items-center justify-center shadow select-none">+</button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-xs px-1">
-                            <span class="text-gray-400">الإجمالي باللتر:</span>
-                            <span id="cupsCountText" class="font-black text-cyan-300 font-outfit">0 / 14 كوب</span>
-                        </div>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-white/5">
+                        <button type="button" id="quickResetBtn" class="py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/20 border border-white/10 text-gray-400 hover:text-rose-300 font-bold text-xs active:scale-95 transition-all">تصفير العداد</button>
                     </div>
-                </div>
-
-                <!-- Fast Quick Actions -->
-                <div class="grid grid-cols-4 gap-2 pt-1 border-t border-white/5">
-                    <button type="button" id="quickAdd1Btn" class="col-span-2 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm active:scale-95 transition-all shadow-lg shadow-cyan-400/20 flex items-center justify-center gap-1">
-                        <span>+ كوب</span>
-                        <span class="text-[10px] bg-slate-950/20 px-1.5 py-0.5 rounded-md font-outfit">250ml</span>
-                    </button>
-                    <button type="button" id="quickAdd2Btn" class="py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/30 text-cyan-200 font-bold text-xs active:scale-95 transition-all">+500ml</button>
-                    <button type="button" id="quickResetBtn" class="py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/20 border border-white/10 text-gray-400 hover:text-rose-300 font-bold text-xs active:scale-95 transition-all">تصفير</button>
                 </div>
             </div>
         </section>
 
-        <!-- 3. Concentric Activity Rings & Biometric Cards -->
-        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div class="smart-card p-5 flex flex-col justify-between">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="text-xs font-bold text-gray-400">تناغم الساعة</span>
-                        <h3 class="text-base font-black text-white">حلقات الإنجاز الثلاث</h3>
-                    </div>
-                    <span id="effortBadge" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">مجهود خارق 🔥</span>
-                </div>
-                <div class="relative w-36 h-36 mx-auto my-2 flex items-center justify-center">
-                    <svg class="w-full h-full" viewBox="0 0 140 140">
-                        <circle cx="70" cy="70" r="58" stroke="rgba(96,239,255,0.12)" stroke-width="10" fill="none"/>
-                        <circle id="ringSteps" class="ring-progress" cx="70" cy="70" r="58" stroke="#60EFFF" stroke-width="10" stroke-linecap="round" stroke-dasharray="364.4" stroke-dashoffset="100" fill="none"/>
-                        <circle cx="70" cy="70" r="44" stroke="rgba(255,0,122,0.12)" stroke-width="10" fill="none"/>
-                        <circle id="ringCalories" class="ring-progress" cx="70" cy="70" r="44" stroke="#FF007A" stroke-width="10" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="80" fill="none"/>
-                        <circle cx="70" cy="70" r="30" stroke="rgba(168,85,247,0.12)" stroke-width="10" fill="none"/>
-                        <circle id="ringSleep" class="ring-progress" cx="70" cy="70" r="30" stroke="#A855F7" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="40" fill="none"/>
-                    </svg>
-                    <div class="absolute flex flex-col items-center">
-                        <span id="effortScoreText" class="text-2xl font-black font-outfit text-white">92%</span>
-                        <span class="text-[9px] text-gray-400 font-bold">التقييم</span>
-                    </div>
-                </div>
-                <div class="flex justify-around text-[11px] font-bold bg-black/40 py-2 rounded-xl border border-white/5">
-                    <span class="text-cyan-300">● خطوات</span>
-                    <span class="text-pink-400">● حرق</span>
-                    <span class="text-purple-400">● نوم</span>
-                </div>
-            </div>
-
+        <!-- 3. حلقات النشاط الحركي والبيانات اليومية -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <div class="smart-card p-5 flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-gray-400">النشاط الحركي</span>
-                    <span class="px-2.5 py-1 rounded-lg bg-cyan-400/10 text-cyan-300 text-xs font-outfit font-bold" id="stepsPctDisplay">104%</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-cyan-400/10 text-cyan-300 text-xs font-outfit font-bold">الهدف: 10,000</span>
                 </div>
                 <div class="my-4">
-                    <div class="text-3xl sm:text-4xl font-black font-outfit text-cyan-300" id="stepsCountDisplay">10,450</div>
-                    <div class="text-xs text-gray-400 font-semibold mt-1">الهدف اليومي: 10,000 خطوة</div>
-                </div>
-                <div class="space-y-2">
-                    <div class="w-full h-2.5 bg-black/50 rounded-full overflow-hidden">
-                        <div id="stepsProgressBar" class="h-full bg-gradient-to-r from-cyan-500 to-emerald-400 rounded-full" style="width: 100%;"></div>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-400 font-bold">
-                        <span>المسافة المقطوعة:</span>
-                        <span id="distanceDisplay" class="text-white font-outfit">7.8 كم</span>
-                    </div>
+                    <div class="text-3xl sm:text-4xl font-black font-outfit text-cyan-300" id="stepsCountDisplay">1,648</div>
+                    <div class="text-xs text-gray-400 font-semibold mt-1">خطوة اليوم</div>
                 </div>
             </div>
 
             <div class="smart-card p-5 flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-400">الحرق النشط (Active)</span>
-                    <span class="px-2.5 py-1 rounded-lg bg-pink-500/10 text-pink-400 text-xs font-bold">🔥 Apple Watch</span>
+                    <span class="text-xs font-bold text-gray-400">الحرق النشط</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-pink-500/10 text-pink-400 text-xs font-bold">🔥 السعرات</span>
                 </div>
                 <div class="my-4">
                     <div class="flex items-baseline gap-2">
-                        <span id="activeCaloriesDisplay" class="text-3xl sm:text-4xl font-black font-outfit text-pink-400">720</span>
+                        <span id="activeCaloriesDisplay" class="text-3xl sm:text-4xl font-black font-outfit text-pink-400">244</span>
                         <span class="text-xs text-gray-400 font-bold">سعرة نشطة</span>
                     </div>
-                    <div class="text-xs text-gray-400 mt-1">الهدف اليومي: 650 سعرة</div>
-                </div>
-                <div class="bg-black/40 p-3 rounded-xl border border-white/5 space-y-1 text-xs">
-                    <div class="flex justify-between text-gray-400">
-                        <span>حرق الجسم الأساسي (BMR):</span>
-                        <span class="text-gray-200 font-outfit font-bold">2,120</span>
-                    </div>
-                    <div class="flex justify-between text-white font-bold pt-1 border-t border-white/5">
-                        <span>إجمالي الحرق الكلي:</span>
-                        <span id="totalBurnDisplay" class="text-pink-400 font-outfit">2,840 سعرة</span>
-                    </div>
                 </div>
             </div>
 
             <div class="smart-card p-5 flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-400">الاستشفاء العضلي</span>
-                    <span id="sleepQualityBadge" class="px-2.5 py-1 rounded-lg bg-emerald-400/10 text-emerald-300 text-xs font-bold">ممتاز</span>
+                    <span class="text-xs font-bold text-gray-400">الاستشفاء والنوم</span>
+                    <span class="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-300 text-xs font-bold">ساعات النوم</span>
                 </div>
                 <div class="my-4">
                     <div class="flex items-baseline gap-2">
-                        <span id="sleepHoursDisplay" class="text-3xl sm:text-4xl font-black font-outfit text-purple-400">7.5</span>
-                        <span class="text-xs text-gray-400 font-bold">ساعات نوم</span>
+                        <span id="sleepHoursDisplay" class="text-3xl sm:text-4xl font-black font-outfit text-purple-400">8.3</span>
+                        <span class="text-xs text-gray-400 font-bold">ساعات</span>
                     </div>
-                    <div class="text-xs text-gray-400 mt-1">المعدل المثالي: 7.5 س</div>
-                </div>
-                <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-xs text-gray-300 leading-relaxed">
-                    النوم الكافي يخفض الكورتيزول ويمنع احتباس السوائل قبل ميزان الجمعة.
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Modals (Weigh-In, Manual Sync, Cloud Sync) -->
+    <!-- نافذة تسجيل وزن الجمعة (Weigh-In Modal) -->
     <div id="weighInModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="smart-card max-w-md w-full p-6 border border-pink-500/40">
             <div class="flex justify-between items-center mb-4">
@@ -368,13 +211,13 @@
                     <input type="number" step="0.1" id="newWeightInput" required class="w-full bg-black/60 border border-white/15 focus:border-pink-500 text-white font-outfit text-2xl font-black px-4 py-3 rounded-xl outline-none">
                 </div>
                 <div class="flex gap-3 pt-2">
-                    <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black rounded-xl text-sm">حفظ وتحديث الشكل 🚀</button>
-                    <button type="button" id="cancelWeighInBtn" class="px-5 py-3 bg-white/10 text-gray-300 font-bold rounded-xl text-sm">إلغاء</button>
+                    <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black rounded-xl text-sm">حفظ في السحابة 🚀</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- نافذة تعديل إحصائيات اليوم (Manual Sync Modal) -->
     <div id="manualSyncModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="smart-card max-w-md w-full p-6">
             <div class="flex justify-between items-center mb-4">
@@ -394,861 +237,17 @@
                     <label class="block text-xs font-bold text-gray-400 mb-1">ساعات النوم</label>
                     <input type="number" step="0.1" id="inputSleep" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-base font-bold px-4 py-2.5 rounded-xl outline-none">
                 </div>
-                <button type="submit" class="w-full py-3 mt-2 bg-cyan-400 text-slate-950 font-black rounded-xl text-sm">تحديث ومزامنة ⚡</button>
+                <button type="submit" class="w-full py-3 mt-2 bg-cyan-400 text-slate-950 font-black rounded-xl text-sm">حفظ ومزامنة ⚡</button>
             </form>
         </div>
     </div>
 
-    <div id="cloudSyncModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-        <div class="smart-card max-w-lg w-full p-6 border border-cyan-400/40">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-lg font-black text-white">☁️ ربط المزامنة السحابية بين الجوالات</h3>
-                <button id="closeCloudModal" class="text-gray-400 hover:text-white text-xl font-bold">✕</button>
-            </div>
-            <form id="cloudConfigForm" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستودع (<code>username/repo</code>)</label>
-                    <input type="text" id="ghRepoInput" placeholder="b67k/health-tracker" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-sm px-4 py-2.5 rounded-xl outline-none" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-1">مسار الملف</label>
-                    <input type="text" id="ghPathInput" value="data.json" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-sm px-4 py-2.5 rounded-xl outline-none" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-400 mb-1">GitHub Token</label>
-                    <input type="password" id="ghTokenInput" placeholder="ghp_xxxxxxxxxxxx" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-sm px-4 py-2.5 rounded-xl outline-none" dir="ltr">
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-cyan-400 to-emerald-400 text-slate-950 font-black rounded-xl text-sm">حفظ وتفعيل المزامنة ⚡</button>
-                    <button type="button" id="clearCloudConfigBtn" class="px-4 py-3 bg-rose-500/20 text-rose-300 font-bold rounded-xl text-xs">إلغاء الربط</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <!-- إشعار Toast للحفظ -->
     <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-emerald-400 text-emerald-300 font-bold px-5 py-3 rounded-2xl shadow-2xl text-xs sm:text-sm transition-all duration-300 opacity-0 pointer-events-none z-50">
-        <span id="toastMessage">تم الحفظ</span>
+        <span id="toastMessage">تم الحفظ بنجاح</span>
     </div>
 
-    <script>
-        const INITIAL_STATE = {
-            startWeight: 110.0,
-            targetWeight: 85.0,
-            currentWeight: 107.0,
-            bmr: 2120,
-            waterCups: 6,
-            waterGoalCups: 14,
-            athkarCount: 33,
-            dailyStats: { steps: 1648, activeCalories: 244, sleepHours: 8.3 },
-            weighIns: [
-                { date: 'البداية', weight: 110.0 },
-                { date: 'الأسبوع 1', weight: 109.1 },
-                { date: 'الأسبوع 2', weight: 108.3 },
-                { date: 'الأسبوع 3', weight: 107.0 }
-            ]
-        };
-
-        const ATHKAR_LIST = [
-            "سبحان الله وبحمده، سبحان الله العظيم",
-            "اللهم صلِّ وسلِّم وبارك على نبينا محمد",
-            "لا حول ولا قوة إلا بالله العلي العظيم",
-            "أستغفر الله العظيم وأتوب إليه",
-            "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر"
-        ];
-
-        let state = {};
-        let currentDhikrIndex = 0;
-        let currentVisualMode = 'matrix';
-        let syncTimeout = null;
-
-        function setTheme(themeName) {
-            document.documentElement.setAttribute('data-theme', themeName);
-            localStorage.setItem('selected_theme_85', themeName);
-            ['cyber', 'glass', 'obsidian'].forEach(t => {
-                const btn = document.getElementById(`theme-${t}`);
-                if (!btn) return;
-                btn.className = (t === themeName)
-                    ? "px-3 py-1 rounded-lg text-xs font-extrabold transition-all bg-cyan-400 text-slate-950"
-                    : "px-3 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-white transition-all";
-            });
-        }
-
-        function setVisualMode(mode) {
-            currentVisualMode = mode;
-            localStorage.setItem('selected_vmode_85', mode);
-            ['matrix', 'cockpit', 'metro', 'battles'].forEach(m => {
-                const btn = document.getElementById(`vmode-${m}`);
-                if (!btn) return;
-                btn.className = (m === mode)
-                    ? "px-3 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-400 text-slate-950 transition-all"
-                    : "px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all";
-            });
-            renderVisualEngine();
-        }
-
-        function renderVisualEngine() {
-            const stage = document.getElementById('visualEngineStage');
-            if (!stage) return;
-
-            const currentW = state.weighIns.length > 0
-                ? parseFloat(state.weighIns[state.weighIns.length - 1].weight)
-                : parseFloat(state.currentWeight);
-            state.currentWeight = currentW;
-
-            const totalToLose = state.startWeight - state.targetWeight; // 25 kg
-            const lostSoFar = Math.max(0, +(state.startWeight - currentW).toFixed(2));
-            const remainingKg = Math.max(0, +(currentW - state.targetWeight).toFixed(2));
-            const pct = Math.min(100, Math.max(0, Math.round((lostSoFar / totalToLose) * 100)));
-
-            if (currentVisualMode === 'matrix') {
-                const fullBurnedKilos = Math.floor(lostSoFar);
-                const activeKiloProgress = Math.round((lostSoFar - fullBurnedKilos) * 100);
-                const gramsLeftForNextKilo = Math.round((1 - (lostSoFar - fullBurnedKilos)) * 1000);
-
-                let cellsHtml = '';
-                for (let i = 0; i < 25; i++) {
-                    const fromW = 110 - i;
-                    const toW = 109 - i;
-                    if (i < fullBurnedKilos) {
-                        cellsHtml += `
-                            <div class="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex flex-col justify-between relative overflow-hidden">
-                                <div class="flex justify-between items-center text-[10px] font-outfit font-bold text-emerald-300">
-                                    <span>${fromW}➔${toW}</span>
-                                    <span>✓</span>
-                                </div>
-                                <div class="text-xs font-black text-emerald-400 mt-1">تم الحرق</div>
-                                <div class="w-full h-1 bg-emerald-400 rounded-full mt-1.5"></div>
-                            </div>`;
-                    } else if (i === fullBurnedKilos && currentW > state.targetWeight) {
-                        cellsHtml += `
-                            <div class="p-2.5 rounded-xl bg-pink-500/15 border-2 border-pink-500 active-burn-cell flex flex-col justify-between relative overflow-hidden">
-                                <div class="flex justify-between items-center text-[10px] font-outfit font-black text-pink-300">
-                                    <span>${fromW}➔${toW}</span>
-                                    <span>${activeKiloProgress}%</span>
-                                </div>
-                                <div class="text-[11px] font-black text-white mt-1">يذوب الآن 🔥</div>
-                                <div class="w-full h-1.5 bg-black/60 rounded-full overflow-hidden mt-1.5">
-                                    <div class="h-full bg-gradient-to-r from-pink-500 to-amber-400" style="width:${Math.max(10, activeKiloProgress)}%"></div>
-                                </div>
-                            </div>`;
-                    } else {
-                        cellsHtml += `
-                            <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col justify-between opacity-60">
-                                <div class="flex justify-between items-center text-[10px] font-outfit font-bold text-gray-400">
-                                    <span>${fromW}➔${toW}</span>
-                                    <span>🔒</span>
-                                </div>
-                                <div class="text-[11px] font-bold text-gray-500 mt-1">هدف قادم</div>
-                                <div class="w-full h-1 bg-white/10 rounded-full mt-1.5"></div>
-                            </div>`;
-                    }
-                }
-
-                stage.innerHTML = `
-                    <div class="space-y-4">
-                        <div class="flex flex-wrap items-center justify-between gap-2 bg-black/40 p-3.5 rounded-2xl border border-white/10">
-                            <div class="flex items-center gap-3">
-                                <span class="text-3xl font-black font-outfit text-white">${currentW.toFixed(1)} <small class="text-xs text-gray-400">kg</small></span>
-                                <div class="text-xs">
-                                    <div class="font-extrabold text-emerald-400">تم تدمير ${fullBurnedKilos} كبسولات كاملة (${lostSoFar} كجم)</div>
-                                    <div class="text-gray-300">باقي <span class="text-pink-400 font-black font-outfit">${gramsLeftForNextKilo} جرام</span> لكسر حاجز الـ ${109 - fullBurnedKilos} كجم!</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-black font-outfit px-3 py-1.5 rounded-xl bg-pink-500/15 text-pink-300 border border-pink-500/30">
-                                الكبسولة الحالية ذابت بنسبة ${activeKiloProgress}%
-                            </span>
-                        </div>
-                        <div class="grid grid-cols-5 gap-2">${cellsHtml}</div>
-                    </div>`;
-            } else if (currentVisualMode === 'cockpit') {
-                const totalKcalBurned = Math.round(lostSoFar * 7700);
-                const weeksCount = Math.max(1, state.weighIns.length - 1);
-                const weeklyVelocity = +(lostSoFar / weeksCount).toFixed(2);
-                const arcLength = 377;
-                const dashOffset = arcLength - (arcLength * (pct / 100));
-
-                stage.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center py-2">
-                        <div class="relative flex flex-col items-center justify-center">
-                            <svg class="w-56 h-56" viewBox="0 0 200 200">
-                                <defs>
-                                    <linearGradient id="cockpitGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stop-color="#FF007A"/>
-                                        <stop offset="50%" stop-color="#FFB800"/>
-                                        <stop offset="100%" stop-color="#00FF87"/>
-                                    </linearGradient>
-                                </defs>
-                                <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.07)" stroke-width="16" stroke-dasharray="377 503" stroke-dashoffset="0" stroke-linecap="round" fill="none" transform="rotate(135 100 100)"/>
-                                <circle cx="100" cy="100" r="80" stroke="url(#cockpitGrad)" stroke-width="16" stroke-dasharray="377 503" stroke-dashoffset="${dashOffset}" stroke-linecap="round" fill="none" transform="rotate(135 100 100)" style="transition: stroke-dashoffset 1s ease;"/>
-                            </svg>
-                            <div class="absolute flex flex-col items-center text-center mt-2">
-                                <span class="text-[11px] font-bold text-gray-400">الوزن الحالي</span>
-                                <span class="text-4xl font-black font-outfit text-white my-0.5">${currentW.toFixed(1)}</span>
-                                <span class="text-xs font-extrabold text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded-full">${pct}% من الرحلة</span>
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <div class="bg-black/40 p-3.5 rounded-2xl border border-white/10 flex justify-between items-center">
-                                <div>
-                                    <div class="text-xs text-gray-400 font-bold">إجمالي مخزون الدهون المحروق</div>
-                                    <div class="text-xl font-black font-outfit text-pink-400">${totalKcalBurned.toLocaleString('en-US')} <span class="text-xs">سعرة حرارية</span></div>
-                                </div>
-                                <span class="text-2xl">🔥</span>
-                            </div>
-                            <div class="bg-black/40 p-3.5 rounded-2xl border border-white/10 flex justify-between items-center">
-                                <div>
-                                    <div class="text-xs text-gray-400 font-bold">سرعة النزول الأسبوعية</div>
-                                    <div class="text-xl font-black font-outfit text-cyan-300">-${weeklyVelocity} <span class="text-xs">كجم / أسبوع</span></div>
-                                </div>
-                                <span class="text-2xl">⚡</span>
-                            </div>
-                            <div class="bg-black/40 p-3.5 rounded-2xl border border-white/10 flex justify-between items-center">
-                                <div>
-                                    <div class="text-xs text-gray-400 font-bold">المتبقي للوصول إلى 85 كجم</div>
-                                    <div class="text-xl font-black font-outfit text-emerald-400">${remainingKg} <span class="text-xs">كجم صافي</span></div>
-                                </div>
-                                <span class="text-2xl">🎯</span>
-                            </div>
-                        </div>
-                    </div>`;
-            } else if (currentVisualMode === 'metro') {
-                const stages = [
-                    { title: 'المرحلة 1: كسر الـ 105', start: 110, end: 105 },
-                    { title: 'المرحلة 2: توديع الثلاث خانات (100)', start: 105, end: 100 },
-                    { title: 'المرحلة 3: منطقة التسعينات الوسطى (95)', start: 100, end: 95 },
-                    { title: 'المرحلة 4: مشارف الثمانينات (90)', start: 95, end: 90 },
-                    { title: 'المرحلة 5: خط النهاية (85 كجم)', start: 90, end: 85 }
-                ];
-
-                stage.innerHTML = `<div class="space-y-2.5">${stages.map((st, idx) => {
-                    let stPct = 0;
-                    let statusBadge = '';
-                    if (currentW <= st.end) {
-                        stPct = 100;
-                        statusBadge = `<span class="text-xs font-extrabold text-emerald-400 bg-emerald-400/15 px-2.5 py-0.5 rounded-lg">مكتملة ✓</span>`;
-                    } else if (currentW < st.start && currentW > st.end) {
-                        stPct = Math.round(((st.start - currentW) / 5) * 100);
-                        const leftInStage = (currentW - st.end).toFixed(1);
-                        statusBadge = `<span class="text-xs font-extrabold text-pink-400 bg-pink-500/15 px-2.5 py-0.5 rounded-lg">جاري التنفيذ (باقي ${leftInStage} كجم) 🔥</span>`;
-                    } else {
-                        statusBadge = `<span class="text-xs font-bold text-gray-500 bg-white/5 px-2.5 py-0.5 rounded-lg">مرحلة قادمة 🔒</span>`;
-                    }
-
-                    return `
-                        <div class="p-3 rounded-2xl bg-black/40 border ${stPct > 0 && stPct < 100 ? 'border-pink-500/50' : 'border-white/10'}">
-                            <div class="flex justify-between items-center mb-1.5">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-outfit font-black ${stPct === 100 ? 'bg-emerald-400 text-slate-950' : stPct > 0 ? 'bg-pink-500 text-white' : 'bg-white/10 text-gray-400'}">${idx + 1}</span>
-                                    <span class="text-xs sm:text-sm font-black text-white">${st.title}</span>
-                                </div>
-                                ${statusBadge}
-                            </div>
-                            <div class="w-full h-2.5 bg-black/60 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-pink-500 via-cyan-400 to-emerald-400 rounded-full transition-all duration-700" style="width:${stPct}%"></div>
-                            </div>
-                        </div>`;
-                }).join('')}</div>`;
-            } else if (currentVisualMode === 'battles') {
-                const cardsHtml = state.weighIns.map((w, idx) => {
-                    if (idx === 0) {
-                        return `
-                            <div class="p-4 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
-                                <div>
-                                    <span class="text-xs text-gray-400 font-bold">${w.date}</span>
-                                    <div class="text-xl font-black font-outfit text-white mt-0.5">${Number(w.weight).toFixed(1)} kg</div>
-                                </div>
-                                <span class="text-xs font-bold text-gray-400 bg-black/40 px-3 py-1 rounded-xl">نقطة الانطلاق 🏁</span>
-                            </div>`;
-                    }
-                    const prevW = state.weighIns[idx - 1].weight;
-                    const diffKg = +(w.weight - prevW).toFixed(2);
-                    const diffGrams = Math.round(Math.abs(diffKg) * 1000);
-                    const isLoss = diffKg <= 0;
-                    const barWidth = Math.min(100, Math.round((Math.abs(diffKg) / 1.5) * 100));
-
-                    return `
-                        <div class="p-4 rounded-2xl bg-black/40 border ${isLoss ? 'border-emerald-500/30' : 'border-rose-500/30'} space-y-2">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-lg font-black font-outfit text-white">${Number(w.weight).toFixed(1)} kg</span>
-                                    <span class="text-xs font-bold text-gray-400">${w.date}</span>
-                                </div>
-                                <span class="text-xs font-black font-outfit px-3 py-1 rounded-xl ${isLoss ? 'bg-emerald-400/15 text-emerald-300 border border-emerald-400/30' : 'bg-rose-500/15 text-rose-300'}">
-                                    ${isLoss ? `🔥 نزول ${diffGrams} جرام (${diffKg} كجم)` : `⚠️ زيادة +${diffGrams} جرام`}
-                                </span>
-                            </div>
-                            <div class="w-full h-2 bg-black/60 rounded-full overflow-hidden">
-                                <div class="h-full ${isLoss ? 'bg-gradient-to-r from-emerald-400 to-cyan-400' : 'bg-rose-500'} rounded-full" style="width:${Math.max(12, barWidth)}%"></div>
-                            </div>
-                        </div>`;
-                }).reverse().join('');
-
-                stage.innerHTML = `<div class="space-y-2.5 max-h-[300px] overflow-y-auto pr-1">${cardsHtml}</div>`;
-            }
-        }
-
-        function playChime(freq = 620) {
-            try {
-                if (navigator.vibrate) navigator.vibrate(18);
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                const ctx = new AudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(freq * 1.35, ctx.currentTime + 0.09);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.16);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.16);
-            } catch (e) {}
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toastNotification');
-            if (!toast) return;
-            document.getElementById('toastMessage').textContent = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2600);
-        }
-
-        function loadState() {
-            try {
-                const savedTheme = localStorage.getItem('selected_theme_85');
-                if (savedTheme) setTheme(savedTheme);
-                const savedVMode = localStorage.getItem('selected_vmode_85');
-                if (savedVMode) currentVisualMode = savedVMode;
-                const saved = localStorage.getItem('health_85_state_v2');
-                if (saved) {
-                    state = { ...INITIAL_STATE, ...JSON.parse(saved) };
-                    return;
-                }
-            } catch (e) {}
-            state = JSON.parse(JSON.stringify(INITIAL_STATE));
-        }
-
-        function saveState(triggerCloud = true) {
-            try {
-                localStorage.setItem('health_85_state_v2', JSON.stringify(state));
-            } catch (e) {}
-            if (triggerCloud) scheduleCloudPush();
-        }
-
-        function updateFridayCountdown() {
-            const now = new Date();
-            const nextFriday = new Date(now);
-            let daysUntilFriday = (5 - now.getDay() + 7) % 7;
-            if (daysUntilFriday === 0 && now.getHours() >= 7) daysUntilFriday = 7;
-            nextFriday.setDate(now.getDate() + daysUntilFriday);
-            nextFriday.setHours(7, 0, 0, 0);
-            const diff = nextFriday - now;
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            const el = document.getElementById('fridayCountdown');
-            if (el) el.textContent = `ميزان الجمعة: باقي ${days}ي و ${hours}س`;
-        }
-
-        function updateDailyEffortScore() {
-            const cleanSteps = Math.round(parseFloat(state.dailyStats.steps) || 0);
-            const cleanCal = Math.round(parseFloat(state.dailyStats.activeCalories) || 0);
-            let rawSleep = parseFloat(state.dailyStats.sleepHours) || 0;
-            if (rawSleep > 24) rawSleep = rawSleep / 3600;
-            const cleanSleep = Number(rawSleep.toFixed(1));
-
-            const stepRatio = Math.min(1, cleanSteps / 10000);
-            const calRatio = Math.min(1, cleanCal / 650);
-            const sleepRatio = Math.min(1, cleanSleep / 7.5);
-
-            const totalScore = Math.round((stepRatio * 40) + (calRatio * 40) + (sleepRatio * 20));
-            const effortScoreEl = document.getElementById('effortScoreText');
-            if (effortScoreEl) effortScoreEl.textContent = `${totalScore}%`;
-
-            const rSteps = document.getElementById('ringSteps');
-            const rCal = document.getElementById('ringCalories');
-            const rSleep = document.getElementById('ringSleep');
-            if (rSteps) rSteps.style.strokeDashoffset = 364.4 - (364.4 * stepRatio);
-            if (rCal) rCal.style.strokeDashoffset = 276.5 - (276.5 * calRatio);
-            if (rSleep) rSleep.style.strokeDashoffset = 188.5 - (188.5 * sleepRatio);
-
-        // ================= FULLY RESPONSIVE WATER ENGINE =================
-        function updateWaterUI() {
-            const cups = Math.max(0, parseInt(state.waterCups) || 0);
-            const goal = parseInt(state.waterGoalCups) || 14;
-            const pct = Math.min(100, Math.round((cups / goal) * 100));
-            const liters = (cups * 0.25).toFixed(2);
-
-            const countEl = document.getElementById('cupsCountText');
-            if (countEl) countEl.textContent = `${cups} / ${goal} كوب (${liters}L)`;
-            
-            const pctEl = document.getElementById('waterPercentageDisplay');
-            if (pctEl) pctEl.textContent = `${pct}%`;
-            
-            const barEl = document.getElementById('waterLevelBar');
-            if (barEl) barEl.style.height = `${Math.max(cups > 0 ? 12 : 0, pct)}%`;
-            
-            const litersEl = document.getElementById('waterLitersText');
-            if (litersEl) litersEl.textContent = `${liters} L`;
-
-            const inputEl = document.getElementById('directCupsInput');
-            if (inputEl && document.activeElement !== inputEl) {
-                inputEl.value = cups;
-            }
-
-            // Interactive Cups Matrix with dynamic selection & unselection
-            const grid = document.getElementById('cupsGridContainer');
-            if (grid) {
-                let html = '';
-                for (let i = 1; i <= goal; i++) {
-                    const filled = i <= cups;
-                    html += `<button type="button" data-cup="${i}" class="water-matrix-cup h-8 rounded-lg border text-[10px] font-outfit font-bold transition-all flex items-center justify-center cursor-pointer select-none active:scale-95 ${
-                        filled ? 'bg-cyan-400 text-slate-950 border-cyan-300 shadow-sm shadow-cyan-400/40 scale-105' : 'bg-white/5 text-gray-400 border-white/10 hover:border-cyan-400/40 hover:text-white'
-                    }" title="كوب ${i}">${i}</button>`;
-                }
-                grid.innerHTML = html;
-            }
-        }
-
-        function setExactCups(n) {
-            const current = parseInt(state.waterCups) || 0;
-            // Clicking current highest cup deselects it back by 1
-            state.waterCups = (current === n) ? Math.max(0, n - 1) : Math.max(0, n);
-            saveState(true);
-            updateWaterUI();
-            playChime(640 + (state.waterCups * 15));
-        }
-
-        function modifyWaterCups(delta) {
-            const current = parseInt(state.waterCups) || 0;
-            state.waterCups = Math.max(0, Math.min(30, current + delta));
-            saveState(true);
-            updateWaterUI();
-            playChime(delta > 0 ? 700 : 500);
-        }
-
-        function resetWaterCups() {
-            state.waterCups = 0;
-            saveState(true);
-            updateWaterUI();
-            showToast('تم تصفير عداد الماء');
-            playChime(420);
-        }
-
-        function updateAthkarUI() {
-            const athkarTextEl = document.getElementById('athkarText');
-            if (athkarTextEl) athkarTextEl.textContent = `"${ATHKAR_LIST[currentDhikrIndex]}"`;
-            const athkarCountEl = document.getElementById('athkarCounterDisplay');
-            if (athkarCountEl) athkarCountEl.textContent = state.athkarCount;
-            const inSet = state.athkarCount % 33;
-            const setBadge = document.getElementById('athkarSetBadge');
-            if (setBadge) setBadge.textContent = `${inSet}/33`;
-            const ring = document.getElementById('athkarRing');
-            if (ring) ring.style.strokeDashoffset = 175.9 - (175.9 * (inSet / 33));
-        }
-
-        function getCloudConfig() {
-            try { return JSON.parse(localStorage.getItem('gh_cloud_config_85') || 'null'); } catch (e) { return null; }
-        }
-
-        function updateSyncBadge(status, text) {
-            const txt = document.getElementById('syncStatusText');
-            if (txt) txt.textContent = text;
-            const badge = document.getElementById('syncStatusBadge');
-            if (!badge) return;
-            if (status === 'synced') {
-                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
-            } else if (status === 'syncing') {
-                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30";
-            } else {
-                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
-            }
-        }
-
-        async function fetchCloudData() {
-            const cfg = getCloudConfig();
-            try {
-                let cloud = null;
-                if (cfg && cfg.repo && cfg.token) {
-                    updateSyncBadge('syncing', 'جاري جلب أحدث بيانات بدون كاش...');
-                    const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path || 'data.json'}?nocache=` + Date.now(), {
-                        headers: { 
-                            'Authorization': `Bearer ${cfg.token}`, 
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                    if (res.ok) {
-                        const meta = await res.json();
-                        cloud = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g, '')))));
-                    }
-                } else {
-                    const res = await fetch('./data.json?t=' + Date.now(), { 
-                        cache: 'no-store',
-                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
-                    });
-                    if (res.ok) cloud = await res.json();
-                }
-
-                if (cloud) {
-                    if (cloud.steps !== undefined && cloud.steps !== '') {
-                        state.dailyStats.steps = Math.round(parseFloat(cloud.steps)) || 0;
-                    }
-                    if (cloud.calories !== undefined && cloud.calories !== '') {
-                        state.dailyStats.activeCalories = Math.round(parseFloat(cloud.calories)) || 0;
-                    }
-                    
-                    // Multi-Source Sleep Handler: Ignore empty strings, handle seconds/hours correctly
-                    if (cloud.sleep !== undefined && cloud.sleep !== '' && cloud.sleep !== null) {
-                        let parsedSleep = parseFloat(cloud.sleep);
-                        if (!isNaN(parsedSleep) && parsedSleep > 0) {
-                            if (parsedSleep > 24) parsedSleep = parsedSleep / 3600;
-                            state.dailyStats.sleepHours = Number(parsedSleep.toFixed(1));
-                        }
-                    }
-
-                    if (cloud.waterCups !== undefined && cloud.waterCups !== '') {
-                        state.waterCups = parseInt(cloud.waterCups) || 0;
-                    }
-                    if (cloud.athkarCount !== undefined && cloud.athkarCount !== '') {
-                        state.athkarCount = parseInt(cloud.athkarCount) || 0;
-                    }
-                    if (Array.isArray(cloud.weighIns) && cloud.weighIns.length > 0) {
-                        state.weighIns = cloud.weighIns;
-                    }
-                    if (cloud.weight !== undefined && cloud.weight !== '') {
-                        const parsedW = parseFloat(cloud.weight);
-                        if (!isNaN(parsedW) && parsedW > 0) {
-                            state.currentWeight = Number(parsedW.toFixed(1));
-                        }
-                    }
-
-                    saveState(false);
-                    refreshAllUI();
-                    updateSyncBadge('synced', cfg ? 'متزامن بين الجوالات ✓' : 'تم سحب أحدث بيانات ✓');
-                }
-            } catch (e) {
-                updateSyncBadge('local', 'وضع محلي');
-            }
-        }
-
-        function scheduleCloudPush() {
-            const cfg = getCloudConfig();
-            if (!cfg || !cfg.repo || !cfg.token) return;
-            if (syncTimeout) clearTimeout(syncTimeout);
-            syncTimeout = setTimeout(pushCloudData, 900);
-        }
-
-        async function pushCloudData() {
-            const cfg = getCloudConfig();
-            if (!cfg || !cfg.repo || !cfg.token) return;
-            try {
-                updateSyncBadge('syncing', 'جاري رفع التحديث للسحابة...');
-                const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${cfg.path || 'data.json'}`;
-                let sha = null, existing = {};
-                const getRes = await fetch(apiUrl + '?nocache=' + Date.now(), { 
-                    headers: { 
-                        'Authorization': `Bearer ${cfg.token}`,
-                        'Cache-Control': 'no-cache'
-                    } 
-                });
-                if (getRes.ok) {
-                    const meta = await getRes.json();
-                    sha = meta.sha;
-                    existing = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g, '')))));
-                }
-
-                // Preserve sleep and Apple Health metrics if already recorded
-                const sleepToUpload = (state.dailyStats.sleepHours && state.dailyStats.sleepHours > 0) 
-                    ? state.dailyStats.sleepHours 
-                    : (existing.sleep || "");
-
-                const payload = {
-                    ...existing,
-                    steps: String(state.dailyStats.steps),
-                    calories: String(state.dailyStats.activeCalories),
-                    sleep: String(sleepToUpload),
-                    weight: String(state.currentWeight),
-                    waterCups: state.waterCups,
-                    athkarCount: state.athkarCount,
-                    weighIns: state.weighIns,
-                    date: existing.date || new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
-                    lastClientSync: Date.now()
-                };
-
-                const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-                const putRes = await fetch(apiUrl, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Sync from device dashboard', content, ...(sha ? { sha } : {}) })
-                });
-
-                if (putRes.ok) {
-                    updateSyncBadge('synced', 'متزامن بين الجوالات ✓');
-                } else {
-                    updateSyncBadge('local', 'تحقق من صلاحية Token');
-                }
-            } catch (e) {
-                updateSyncBadge('local', 'تعذر الرفع للسحابة');
-            }
-        }
-
-        function refreshAllUI() {
-            updateDailyEffortScore();
-            updateWaterUI();
-            updateAthkarUI();
-            renderVisualEngine();
-        }
-
-        function setupEvents() {
-            document.getElementById('dhikrClickBtn').addEventListener('click', () => {
-                state.athkarCount++;
-                saveState(true);
-                updateAthkarUI();
-                playChime(587);
-            });
-            document.getElementById('nextDhikrBtn').addEventListener('click', () => {
-                currentDhikrIndex = (currentDhikrIndex + 1) % ATHKAR_LIST.length;
-                updateAthkarUI();
-            });
-            document.getElementById('resetDhikrBtn').addEventListener('click', () => {
-                state.athkarCount = 0;
-                saveState(true);
-                updateAthkarUI();
-            });
-
-            // Direct input & controls for water cups
-            const cupsInput = document.getElementById('directCupsInput');
-            if (cupsInput) {
-                const handleInputChange = (e) => {
-                    const val = parseInt(e.target.value);
-                    if (!isNaN(val)) {
-                        state.waterCups = Math.max(0, Math.min(30, val));
-                        saveState(true);
-                        updateWaterUI();
-                        playChime(650);
-                    }
-                };
-                cupsInput.addEventListener('change', handleInputChange);
-                cupsInput.addEventListener('input', handleInputChange);
-            }
-
-            const plusBtn = document.getElementById('stepperPlusBtn');
-            if (plusBtn) plusBtn.addEventListener('click', () => modifyWaterCups(1));
-
-            const minusBtn = document.getElementById('stepperMinusBtn');
-            if (minusBtn) minusBtn.addEventListener('click', () => modifyWaterCups(-1));
-
-            const qAdd1 = document.getElementById('quickAdd1Btn');
-            if (qAdd1) qAdd1.addEventListener('click', () => modifyWaterCups(1));
-
-            const qAdd2 = document.getElementById('quickAdd2Btn');
-            if (qAdd2) qAdd2.addEventListener('click', () => modifyWaterCups(2));
-
-            const qReset = document.getElementById('quickResetBtn');
-            if (qReset) qReset.addEventListener('click', resetWaterCups);
-
-            const cupsGrid = document.getElementById('cupsGridContainer');
-            if (cupsGrid) {
-                cupsGrid.addEventListener('click', (e) => {
-                    const btn = e.target.closest('.water-matrix-cup');
-                    if (btn && btn.dataset.cup) {
-                        setExactCups(parseInt(btn.dataset.cup));
-                    }
-                });
-            }
-
-            document.getElementById('forceSyncBtn').addEventListener('click', () => {
-                fetchCloudData();
-                showToast('جاري سحب أحدث البيانات...');
-            });
-            }
-
-            const nextDhikrBtn = document.getElementById('nextDhikrBtn');
-            if (nextDhikrBtn) {
-                nextDhikrBtn.addEventListener('click', () => {
-                    currentDhikrIndex = (currentDhikrIndex + 1) % ATHKAR_LIST.length;
-                    updateAthkarUI();
-                });
-            }
-
-            const resetDhikrBtn = document.getElementById('resetDhikrBtn');
-            if (resetDhikrBtn) {
-                resetDhikrBtn.addEventListener('click', () => {
-                    state.athkarCount = 0;
-                    saveState(true);
-                    updateAthkarUI();
-                    showToast('تم تصفير عداد الأذكار');
-                });
-            }
-
-            const addCupBtn = document.getElementById('addCupBtn');
-            if (addCupBtn) {
-                addCupBtn.addEventListener('click', () => {
-                    state.waterCups = Math.min(20, state.waterCups + 1);
-                    saveState(true);
-                    updateWaterUI();
-                    playChime(660);
-                });
-            }
-
-            const addTwoCupsBtn = document.getElementById('addTwoCupsBtn');
-            if (addTwoCupsBtn) {
-                addTwoCupsBtn.addEventListener('click', () => {
-                    state.waterCups = Math.min(20, state.waterCups + 2);
-                    saveState(true);
-                    updateWaterUI();
-                    playChime(740);
-                });
-            }
-
-            const minusCupBtn = document.getElementById('minusCupBtn');
-            if (minusCupBtn) {
-                minusCupBtn.addEventListener('click', () => {
-                    state.waterCups = Math.max(0, state.waterCups - 1);
-                    saveState(true);
-                    updateWaterUI();
-                });
-            }
-
-            const forceSyncBtn = document.getElementById('forceSyncBtn');
-            if (forceSyncBtn) {
-                forceSyncBtn.addEventListener('click', () => {
-                    fetchCloudData();
-                    showToast('تم فحص وتحديث البيانات من السحابة بدون كاش 🔄');
-                });
-            }
-
-            const weighModal = document.getElementById('weighInModal');
-            const openWeighBtn = document.getElementById('openWeighInBtn');
-            if (openWeighBtn && weighModal) {
-                openWeighBtn.addEventListener('click', () => {
-                    document.getElementById('newWeightInput').value = state.currentWeight;
-                    weighModal.classList.remove('hidden');
-                });
-            }
-
-            const closeWeighBtn = document.getElementById('closeWeighInModal');
-            if (closeWeighBtn && weighModal) {
-                closeWeighBtn.addEventListener('click', () => weighModal.classList.add('hidden'));
-            }
-
-            const cancelWeighBtn = document.getElementById('cancelWeighInBtn');
-            if (cancelWeighBtn && weighModal) {
-                cancelWeighBtn.addEventListener('click', () => weighModal.classList.add('hidden'));
-            }
-
-            const weighForm = document.getElementById('weighInForm');
-            if (weighForm && weighModal) {
-                weighForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const newW = parseFloat(document.getElementById('newWeightInput').value);
-                    if (!newW || isNaN(newW)) return;
-                    state.weighIns.push({ date: `الأسبوع ${state.weighIns.length}`, weight: newW });
-                    state.currentWeight = newW;
-                    saveState(true);
-                    refreshAllUI();
-                    weighModal.classList.add('hidden');
-                    showToast(`تم تسجيل وزن ${newW} كجم وتحديث المسار! 🚀`);
-                });
-            }
-
-            const manualModal = document.getElementById('manualSyncModal');
-            const openManualBtn = document.getElementById('openManualSyncBtn');
-            if (openManualBtn && manualModal) {
-                openManualBtn.addEventListener('click', () => {
-                    document.getElementById('inputSteps').value = state.dailyStats.steps;
-                    document.getElementById('inputCalories').value = state.dailyStats.activeCalories;
-                    document.getElementById('inputSleep').value = state.dailyStats.sleepHours;
-                    manualModal.classList.remove('hidden');
-                });
-            }
-
-            const closeManualBtn = document.getElementById('closeManualSyncModal');
-            if (closeManualBtn && manualModal) {
-                closeManualBtn.addEventListener('click', () => manualModal.classList.add('hidden'));
-            }
-
-            const dailyForm = document.getElementById('dailyStatsForm');
-            if (dailyForm && manualModal) {
-                dailyForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    state.dailyStats.steps = parseInt(document.getElementById('inputSteps').value) || 0;
-                    state.dailyStats.activeCalories = parseInt(document.getElementById('inputCalories').value) || 0;
-                    state.dailyStats.sleepHours = parseFloat(document.getElementById('inputSleep').value) || 0;
-                    saveState(true);
-                    refreshAllUI();
-                    manualModal.classList.add('hidden');
-                    showToast('تم تحديث إحصائيات اليوم يدوياً');
-                });
-            }
-
-            const cloudModal = document.getElementById('cloudSyncModal');
-            const openCloudBtn = document.getElementById('openCloudModalBtn');
-            if (openCloudBtn && cloudModal) {
-                openCloudBtn.addEventListener('click', () => {
-                    const cfg = getCloudConfig() || {};
-                    document.getElementById('ghRepoInput').value = cfg.repo || '';
-                    document.getElementById('ghPathInput').value = cfg.path || 'data.json';
-                    document.getElementById('ghTokenInput').value = cfg.token || '';
-                    cloudModal.classList.remove('hidden');
-                });
-            }
-
-            const closeCloudBtn = document.getElementById('closeCloudModal');
-            if (closeCloudBtn && cloudModal) {
-                closeCloudBtn.addEventListener('click', () => cloudModal.classList.add('hidden'));
-            }
-
-            const cloudForm = document.getElementById('cloudConfigForm');
-            if (cloudForm && cloudModal) {
-                cloudForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const cfg = {
-                        repo: document.getElementById('ghRepoInput').value.trim(),
-                        path: document.getElementById('ghPathInput').value.trim() || 'data.json',
-                        token: document.getElementById('ghTokenInput').value.trim()
-                    };
-                    localStorage.setItem('gh_cloud_config_85', JSON.stringify(cfg));
-                    cloudModal.classList.add('hidden');
-                    fetchCloudData();
-                    pushCloudData();
-                    showToast('تم تفعيل المزامنة المباشرة بين الجوالات ☁️');
-                });
-            }
-
-            const clearCloudBtn = document.getElementById('clearCloudConfigBtn');
-            if (clearCloudBtn && cloudModal) {
-                clearCloudBtn.addEventListener('click', () => {
-                    localStorage.removeItem('gh_cloud_config_85');
-                    cloudModal.classList.add('hidden');
-                    updateSyncBadge('local', 'وضع محلي');
-                    showToast('تم إلغاء الربط السحابي');
-                });
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            loadState();
-            const dateEl = document.getElementById('currentDateDisplay');
-            if (dateEl) {
-                dateEl.textContent = new Date().toLocaleDateString('ar-SA', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-            }
-            updateFridayCountdown();
-            setInterval(updateFridayCountdown, 60000);
-            refreshAllUI();
-            setupEvents();
-            fetchCloudData();
-            // Live background polling every 20s
-            setInterval(fetchCloudData, 20000);
-        });
-    </script>
+    <!-- السكربت البرمجي الرئيسي -->
+    <script src="js/app.js"></script>
 </body>
 </html>
