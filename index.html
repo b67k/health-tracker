@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مسار الـ 85 | لوحة متابعة الصحة والنشاط</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+    <!-- Google Fonts: Cairo & Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Outfit:wght@500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#090D16',
+                        cardBg: '#111726',
+                        cardBorder: '#1F293D',
+                        neonGreen: '#00FF87',
+                        neonCyan: '#60EFFF',
+                        neonPink: '#FF007A',
+                        neonAmber: '#FFB800',
+                        neonPurple: '#A855F7',
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #080C14;
+            color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(96, 239, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 0, 122, 0.08) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(0, 255, 135, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .neon-glow-green {
+            box-shadow: 0 0 25px -5px rgba(0, 255, 135, 0.35);
+        }
+        .neon-glow-pink {
+            box-shadow: 0 0 25px -5px rgba(255, 0, 122, 0.35);
+        }
+        .neon-glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(96, 239, 255, 0.35);
+        }
+        .neon-glow-amber {
+            box-shadow: 0 0 25px -5px rgba(255, 184, 0, 0.35);
+        }
+        .neon-border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .neon-border:hover {
+            border-color: rgba(96, 239, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        /* Custom animated water wave */
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-25%); }
+            100% { transform: translateX(0); }
+        }
+        .water-wave {
+            animation: wave 4s ease-in-out infinite;
+        }
+        /* Pulse slow */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-3 sm:p-6 lg:p-8">
+
+    <!-- Top Navigation / Header -->
+    <header class="max-w-7xl mx-auto mb-6 flex flex-col md:flex-row items-center justify-between gap-4 bg-cardBg/80 backdrop-blur-md p-4 rounded-2xl border border-cardBorder">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-neonGreen to-neonCyan flex items-center justify-center text-darkBg font-black text-2xl shadow-lg">
+                85
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-black tracking-wide flex items-center gap-2">
+                    مسار الـ 85 كجم
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-neonGreen/20 text-neonGreen border border-neonGreen/30">الهدف النهائي</span>
+                </h1>
+                <p class="text-xs sm:text-sm text-gray-400" id="currentDateDisplay">جاري تحديث التاريخ...</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+            <button id="openWeighInBtn" class="flex-1 md:flex-initial px-4 py-2.5 rounded-xl bg-gradient-to-r from-neonPink to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-bold text-sm flex items-center justify-center gap-2 transition-all shadow-lg neon-glow-pink active:scale-95">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                <span>وزن الجمعة ⚖️</span>
+            </button>
+            <button id="openManualSyncBtn" class="px-3 py-2.5 rounded-xl bg-cardBorder hover:bg-gray-700 text-gray-300 hover:text-white text-sm font-semibold transition-all flex items-center gap-1.5" title="تعديل بيانات اليوم">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="hidden sm:inline">تعديل</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-6">
+
+        <!-- 1. ذكر حسنات (Islamic Athkar & Hasanat Widget) -->
+        <section class="bg-gradient-to-r from-[#141E33] to-[#121A2D] rounded-2xl p-4 sm:p-5 border border-neonCyan/30 relative overflow-hidden neon-glow-cyan">
+            <div class="absolute -left-10 -bottom-10 w-36 h-36 bg-neonCyan/10 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-start gap-3">
+                    <div class="p-3 bg-neonCyan/20 text-neonCyan rounded-xl shrink-0 mt-0.5">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold uppercase tracking-wider text-neonCyan bg-neonCyan/10 px-2.5 py-0.5 rounded-md">زاد الروح والصحة</span>
+                            <span class="text-xs text-gray-400">«نعمتان مغبون فيهما كثير من الناس: الصحة والفراغ»</span>
+                        </div>
+                        <p id="athkarText" class="text-sm sm:text-base font-semibold text-gray-200">
+                            "سبحان الله وبحمده، سبحان الله العظيم"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                    <div class="text-center bg-darkBg/60 px-4 py-2 rounded-xl border border-cardBorder">
+                        <div class="text-xs text-gray-400">حسنات الذكر</div>
+                        <div id="athkarCounterDisplay" class="text-xl font-black text-neonGreen font-outfit">0</div>
+                    </div>
+                    <button id="dhikrClickBtn" class="px-5 py-2.5 bg-neonCyan text-darkBg font-black rounded-xl text-sm hover:bg-cyan-300 active:scale-90 transition-all flex items-center gap-2 shadow-lg">
+                        <span>تسبيحة</span>
+                        <span class="text-xs bg-darkBg/20 px-2 py-0.5 rounded-full font-outfit">+1</span>
+                    </button>
+                    <button id="nextDhikrBtn" class="p-2.5 text-gray-400 hover:text-white rounded-xl bg-cardBorder hover:bg-gray-700 transition-all" title="ذكر آخر">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Goal Progress & Trajectory Bar -->
+        <section class="bg-cardBg rounded-2xl p-5 sm:p-6 border border-cardBorder relative">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+                <div>
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">الرحلة إلى 85 كجم</div>
+                    <div class="flex items-baseline gap-3">
+                        <span id="currentWeightDisplay" class="text-4xl sm:text-5xl font-black font-outfit text-white">110.0</span>
+                        <span class="text-lg text-gray-400 font-semibold">كجم حالياً</span>
+                        <span class="text-sm font-bold text-neonPink bg-neonPink/10 px-2.5 py-1 rounded-lg">
+                            الهدف: 85 كجم (<span id="remainingKgDisplay">25.0</span> كجم متبقية)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Friday Countdown & Realistic Days -->
+                <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <!-- Friday Countdown -->
+                    <div class="bg-darkBg p-3 rounded-xl border border-neonAmber/30 flex items-center gap-3">
+                        <div class="p-2 rounded-lg bg-neonAmber/20 text-neonAmber">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-gray-400 font-bold">موعد وزن الجمعة الصباح</div>
+                            <div id="fridayCountdown" class="text-sm font-extrabold text-neonAmber font-outfit">جاري الحساب...</div>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Days -->
+                    <div class="bg-darkBg p-3 rounded-xl border border-neonGreen/30 flex items-center gap-3">
+                        <div class="p-2 rounded-lg bg-neonGreen/20 text-neonGreen">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-gray-400 font-bold">التخمين الواقعي للهدف</div>
+                            <div id="estimatedDaysDisplay" class="text-sm font-extrabold text-neonGreen font-outfit">~175 يوم (لو التزمت)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Big Progress Bar -->
+            <div class="space-y-2">
+                <div class="flex justify-between text-xs font-bold text-gray-400">
+                    <span>البداية: 110 كجم</span>
+                    <span id="progressPercentageDisplay" class="text-neonCyan font-extrabold">0% منجز</span>
+                    <span>الهدف: 85 كجم</span>
+                </div>
+                <div class="w-full h-4 bg-darkBg rounded-full overflow-hidden p-0.5 border border-cardBorder">
+                    <div id="journeyProgressBar" class="h-full bg-gradient-to-r from-neonPink via-neonAmber to-neonGreen rounded-full transition-all duration-1000" style="width: 4%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. المجهود اليومي (Apple Watch Stats & Daily Effort Score) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <!-- Daily Effort Score Card -->
+            <div class="bg-cardBg rounded-2xl p-5 border border-neonGreen/40 neon-glow-green relative flex flex-col justify-between">
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <span class="text-xs font-bold text-gray-400">دقة ومجهود اليوم</span>
+                        <h3 class="text-lg font-black text-white">درجة الإنجاز اليومي</h3>
+                    </div>
+                    <span id="effortBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-neonGreen/20 text-neonGreen border border-neonGreen/30 animate-pulse-slow">
+                        مجهود خارق 🔥
+                    </span>
+                </div>
+
+                <div class="flex items-center justify-center my-3">
+                    <div class="relative w-32 h-32 flex items-center justify-center">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="42" stroke="#1F293D" stroke-width="10" fill="transparent"/>
+                            <circle id="effortCircle" cx="50" cy="50" r="42" stroke="#00FF87" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="30" fill="transparent" class="transition-all duration-1000"/>
+                        </svg>
+                        <div class="absolute flex flex-col items-center">
+                            <span id="effortScoreText" class="text-3xl font-black font-outfit text-white">88%</span>
+                            <span class="text-[10px] text-gray-400 font-bold">معدل التوافق</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-xs text-center text-gray-300 bg-darkBg/60 p-2 rounded-xl border border-cardBorder">
+                    يحسب تلقائياً من تناغم الخطوات وحرق السعرات وساعات نومك.
+                </div>
+            </div>
+
+            <!-- Steps Card -->
+            <div class="bg-cardBg rounded-2xl p-5 border border-cardBorder neon-border flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-400">النشاط البدني</span>
+                    <div class="w-9 h-9 rounded-xl bg-neonCyan/20 text-neonCyan flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400 font-semibold">إجمالي الخطوات</div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="stepsCountDisplay" class="text-3xl font-black font-outfit text-neonCyan">11,420</span>
+                        <span class="text-xs text-gray-500 font-bold">/ 10,000 خطوة</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="w-full h-2.5 bg-darkBg rounded-full overflow-hidden border border-cardBorder">
+                        <div id="stepsProgressBar" class="h-full bg-neonCyan rounded-full transition-all duration-700" style="width: 100%;"></div>
+                    </div>
+                    <div class="flex justify-between text-[11px] text-gray-400 mt-1.5 font-bold">
+                        <span>المسافة: <span id="distanceDisplay" class="text-gray-200">8.2 كم</span></span>
+                        <span class="text-neonCyan">114% منجز</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calories Burned Card -->
+            <div class="bg-cardBg rounded-2xl p-5 border border-cardBorder neon-border flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-400">حرق السعرات</span>
+                    <div class="w-9 h-9 rounded-xl bg-neonPink/20 text-neonPink flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/></svg>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400 font-semibold">الحرق النشط (ساعة آبل)</div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="activeCaloriesDisplay" class="text-3xl font-black font-outfit text-neonPink">780</span>
+                        <span class="text-xs text-gray-500 font-bold">سعرة حرارية</span>
+                    </div>
+                </div>
+                <div class="bg-darkBg/60 p-2.5 rounded-xl border border-cardBorder space-y-1 text-xs">
+                    <div class="flex justify-between text-gray-400">
+                        <span>حرق الراحة الأساسي (BMR):</span>
+                        <span class="text-gray-200 font-bold font-outfit">2,120 سعرة</span>
+                    </div>
+                    <div class="flex justify-between text-gray-300 font-bold">
+                        <span>إجمالي حرق اليوم:</span>
+                        <span id="totalBurnDisplay" class="text-neonPink font-outfit">2,900 سعرة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sleep Card -->
+            <div class="bg-cardBg rounded-2xl p-5 border border-cardBorder neon-border flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-gray-400">الاستشفاء والنوم</span>
+                    <div class="w-9 h-9 rounded-xl bg-neonPurple/20 text-neonPurple flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                    </div>
+                </div>
+                <div class="my-3">
+                    <div class="text-xs text-gray-400 font-semibold">ساعات النوم المسجلة</div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="sleepHoursDisplay" class="text-3xl font-black font-outfit text-neonPurple">7.4</span>
+                        <span class="text-xs text-gray-400 font-bold">ساعات</span>
+                    </div>
+                </div>
+                <div class="bg-darkBg/60 p-2.5 rounded-xl border border-cardBorder flex items-center justify-between text-xs">
+                    <span class="text-gray-400">جودة الاستشفاء:</span>
+                    <span id="sleepQualityBadge" class="text-neonGreen font-bold bg-neonGreen/10 px-2 py-0.5 rounded">ممتاز (استشفاء عضلي)</span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 4. المخطط البياني للرحلة + شرب الماء التفاعلي -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Chart.js: مسار الرحلة إلى 85 كجم -->
+            <div class="lg:col-span-2 bg-cardBg rounded-2xl p-5 border border-cardBorder relative">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span>مخطط بياني لرحلتي</span>
+                            <span class="text-xs font-bold px-2 py-0.5 rounded bg-neonCyan/10 text-neonCyan border border-neonCyan/20">تتبع أسبوعي</span>
+                        </h2>
+                        <p class="text-xs text-gray-400">مقارنة النزول الفعلي كل جمعة بالمسار الواقعي المستهدف (110 ⬅️ 85 كجم)</p>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="inline-flex items-center gap-1 text-neonPink font-bold">
+                            <span class="w-3 h-3 rounded-full bg-neonPink"></span> الوزن الفعلي
+                        </span>
+                        <span class="inline-flex items-center gap-1 text-neonGreen font-bold">
+                            <span class="w-3 h-3 rounded-full bg-neonGreen"></span> مسار الالتزام
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Fixed height chart container as required by Chart.js in canvas -->
+                <div class="relative h-72 w-full">
+                    <canvas id="journeyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- شرب الماء التفاعلي (Water Tracker) -->
+            <div class="bg-cardBg rounded-2xl p-5 border border-neonCyan/30 neon-glow-cyan flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">شرب الماء 💧</h3>
+                        <p class="text-xs text-gray-400">الهدف اليومي: 3.5 لتر (14 كوب)</p>
+                    </div>
+                    <span id="waterPercentageDisplay" class="text-xs font-black font-outfit px-2.5 py-1 rounded-lg bg-neonCyan/20 text-neonCyan border border-neonCyan/30">
+                        0%
+                    </span>
+                </div>
+
+                <!-- Animated Water Container Visual -->
+                <div class="my-4 flex items-center justify-center">
+                    <div class="relative w-32 h-44 bg-darkBg rounded-2xl border-2 border-neonCyan/40 overflow-hidden flex flex-col justify-end shadow-inner">
+                        <div id="waterLevelBar" class="w-full bg-gradient-to-t from-cyan-600 via-neonCyan to-cyan-300 transition-all duration-500 relative flex items-center justify-center" style="height: 50%;">
+                            <div class="absolute inset-0 opacity-40 bg-white/20 water-wave"></div>
+                            <span id="waterLitersText" class="relative z-10 text-xs font-black font-outfit text-darkBg bg-white/70 px-2 py-0.5 rounded-full">1.75 L</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between text-xs text-gray-300">
+                        <span>الأكواب المشربة:</span>
+                        <span id="cupsCountText" class="font-extrabold text-neonCyan font-outfit text-base">7 / 14 كوب</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button id="addCupBtn" class="py-2.5 rounded-xl bg-neonCyan text-darkBg font-black text-sm hover:bg-cyan-300 active:scale-95 transition-all flex items-center justify-center gap-1 shadow">
+                            <span>+ كوب</span>
+                        </button>
+                        <button id="addTwoCupsBtn" class="py-2.5 rounded-xl bg-cyan-700/60 hover:bg-cyan-600 text-cyan-200 font-bold text-sm active:scale-95 transition-all flex items-center justify-center">
+                            <span>+ كوبين</span>
+                        </button>
+                        <button id="resetWaterBtn" class="py-2.5 rounded-xl bg-cardBorder hover:bg-gray-700 text-gray-400 hover:text-white text-xs font-bold active:scale-95 transition-all">
+                            تصفير
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 5. نصائح ذكية للوصول (Dynamic Coaching Tips for 85kg Goal) -->
+        <section class="bg-cardBg rounded-2xl p-5 border border-cardBorder">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="p-2 rounded-xl bg-neonAmber/20 text-neonAmber">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base sm:text-lg font-bold text-white">نصائح وملاحظات اليوم للوصول لـ 85 كجم</h3>
+                        <p class="text-xs text-gray-400">توجيهات ديناميكية مبنية على مجهودك الفعلي دون تعقيد حساب السعرات</p>
+                    </div>
+                </div>
+                <span class="text-xs font-bold text-gray-400 bg-darkBg px-3 py-1.5 rounded-xl border border-cardBorder hidden sm:inline">
+                    عمر 21 • طول 180 سم
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="coachingTipsContainer">
+                <!-- Tip 1 -->
+                <div class="bg-darkBg p-4 rounded-xl border border-cardBorder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-neonGreen font-bold text-sm mb-1.5">
+                            <span>🔥</span>
+                            <span>استمرارية الحركة اليومية</span>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed" id="tipMovement">
+                            بما أن حرقك النشط تجاوز 600 سعرة اليوم مع خطوات فوق 10,000، جسمك يحرق دهوناً حقيقية. استمرارك على هذه الحركة كافٍ جداً لخسارة 0.7 - 1 كجم أسبوعياً دون حرمان!
+                        </p>
+                    </div>
+                    <div class="mt-3 text-[11px] text-neonGreen font-bold">تأثير ممتاز على حرق الدهون</div>
+                </div>
+
+                <!-- Tip 2 -->
+                <div class="bg-darkBg p-4 rounded-xl border border-cardBorder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-neonAmber font-bold text-sm mb-1.5">
+                            <span>🍽️</span>
+                            <span>قاعدة الشهرين بدون تسجيل سعرات</span>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed" id="tipNutrition">
+                            لا تشغل نفسك بالأرقام الآن؛ ركز فقط على قاعدتين: توقف عن الأكل قبل الشبع التام، واستبدل المشروبات المحلاة بالماء. هذا التعديل البسيط يصنع عجز 500 سعرة يومياً تلقائياً.
+                        </p>
+                    </div>
+                    <div class="mt-3 text-[11px] text-neonAmber font-bold">بناء عادة تدوم مدى الحياة</div>
+                </div>
+
+                <!-- Tip 3 -->
+                <div class="bg-darkBg p-4 rounded-xl border border-cardBorder flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-2 text-neonPurple font-bold text-sm mb-1.5">
+                            <span>🛌</span>
+                            <span>الاستشفاء وموعد ميزان الجمعة</span>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed" id="tipRecovery">
+                            النوم العميق 7+ ساعات يقلل هرمون التوتر (الكورتيزول) الذي يحبس السوائل داخل الجسم. التزم بالنوم الجيد لتظهر نتيجة مجهودك الحقيقية في ميزان الجمعة القادم.
+                        </p>
+                    </div>
+                    <div class="mt-3 text-[11px] text-neonPurple font-bold">سر النزول المستقر</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal 1: تسجيل وزن الجمعة (Weigh-In Modal) -->
+    <div id="weighInModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-neonPink/40 rounded-2xl max-w-md w-full p-6 neon-glow-pink relative">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="p-2 bg-neonPink/20 text-neonPink rounded-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">تسجيل وزن الجمعة ⚖️</h3>
+                </div>
+                <button id="closeWeighInModal" class="text-gray-400 hover:text-white p-1 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <p class="text-xs text-gray-300 mb-4">
+                أدخل الوزن الذي ظهر على الميزان صباح يوم الجمعة. سيتم تحديث الرسم البياني وإعادة حساب مسار الوصول لـ 85 كجم فوراً!
+            </p>
+
+            <form id="weighInForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">الوزن المسجل (كجم)</label>
+                    <input type="number" step="0.1" id="newWeightInput" required placeholder="مثال: 108.5" class="w-full bg-darkBg border border-cardBorder focus:border-neonPink text-white font-outfit text-xl font-bold px-4 py-3 rounded-xl outline-none transition-all">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">ملاحظة أسبوعية (اختياري)</label>
+                    <input type="text" id="weighNoteInput" placeholder="مثال: التزام ممتاز بالمشي وخفة ملحوظة" class="w-full bg-darkBg border border-cardBorder focus:border-neonPink text-gray-200 text-sm px-4 py-2.5 rounded-xl outline-none transition-all">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="submit" class="flex-1 py-3 bg-neonPink hover:bg-pink-600 text-white font-bold rounded-xl text-sm transition-all shadow-lg active:scale-95">
+                        حفظ وتحديث المسار 🚀
+                    </button>
+                    <button type="button" id="cancelWeighInBtn" class="px-5 py-3 bg-cardBorder hover:bg-gray-700 text-gray-300 font-bold rounded-xl text-sm transition-all">
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: تعديل بيانات اليوم السريعة يدويًا (Manual Stats Update) -->
+    <div id="manualSyncModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-cardBg border border-neonCyan/40 rounded-2xl max-w-md w-full p-6 neon-glow-cyan relative">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="p-2 bg-neonCyan/20 text-neonCyan rounded-xl">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">تعديل إحصائيات اليوم</h3>
+                </div>
+                <button id="closeManualSyncModal" class="text-gray-400 hover:text-white p-1 rounded-lg">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <form id="dailyStatsForm" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">الخطوات اليومية</label>
+                    <input type="number" id="inputSteps" class="w-full bg-darkBg border border-cardBorder focus:border-neonCyan text-white font-outfit text-base font-bold px-4 py-2.5 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">الحرق النشط (Active Calories)</label>
+                    <input type="number" id="inputCalories" class="w-full bg-darkBg border border-cardBorder focus:border-neonCyan text-white font-outfit text-base font-bold px-4 py-2.5 rounded-xl outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1">ساعات النوم</label>
+                    <input type="number" step="0.1" id="inputSleep" class="w-full bg-darkBg border border-cardBorder focus:border-neonCyan text-white font-outfit text-base font-bold px-4 py-2.5 rounded-xl outline-none">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="submit" class="flex-1 py-3 bg-neonCyan text-darkBg font-black rounded-xl text-sm transition-all shadow-lg active:scale-95">
+                        تحديث الإحصائيات ⚡
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-cardBg border border-neonGreen text-neonGreen font-bold px-5 py-3 rounded-xl shadow-2xl text-sm transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="toastMessage">تم الحفظ بنجاح</span>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Default / Initial State
+        const INITIAL_STATE = {
+            startWeight: 110.0,
+            targetWeight: 85.0,
+            currentWeight: 110.0,
+            age: 21,
+            height: 180,
+            bmr: 2120, // Basal Metabolic Rate
+            waterCups: 6, // 250ml each
+            waterGoalCups: 14, // 3.5L
+            athkarCount: 33,
+            dailyStats: {
+                steps: 10450,
+                activeCalories: 720,
+                sleepHours: 7.5,
+                distanceKm: 7.8
+            },
+            weighIns: [
+                { date: 'الأسبوع 0 (البداية)', weight: 110.0 },
+                { date: 'الأسبوع 1', weight: 109.1 },
+                { date: 'الأسبوع 2', weight: 108.3 },
+                { date: 'الأسبوع 3', weight: 107.6 }
+            ]
+        };
+
+        const ATHKAR_LIST = [
+            "سبحان الله وبحمده، سبحان الله العظيم",
+            "اللهم صلِّ وسلِّم وبارك على نبينا محمد",
+            "لا حول ولا قوة إلا بالله العلي العظيم",
+            "أستغفر الله العظيم وأتوب إليه",
+            "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+            "لا إله إلا أنت سبحانك إني كنت من الظالمين",
+            "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله"
+        ];
+
+        let state = {};
+        let currentDhikrIndex = 0;
+        let chartInstance = null;
+
+        // Web Audio Synthesizer for Dhikr Tap Effect
+        function playChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) {
+                // Audio might be restricted until user gesture, ignore safely
+            }
+        }
+
+        // Storage Helper (Safe localStorage wrapped in try/catch)
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('health_85_state');
+                if (saved) {
+                    state = JSON.parse(saved);
+                    return;
+                }
+            } catch (e) {
+                console.warn('localStorage error, using defaults', e);
+            }
+            state = JSON.parse(JSON.stringify(INITIAL_STATE));
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('health_85_state', JSON.stringify(state));
+            } catch (e) {
+                console.warn('Unable to save to localStorage', e);
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            const toastMsg = document.getElementById('toastMessage');
+            toastMsg.textContent = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // UI Updates
+        function updateDateHeader() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const arDate = now.toLocaleDateString('ar-SA', options);
+            document.getElementById('currentDateDisplay').textContent = arDate;
+        }
+
+        function updateFridayCountdown() {
+            const now = new Date();
+            // Calculate next Friday at 07:00 AM
+            const nextFriday = new Date(now);
+            const currentDay = now.getDay(); // 0: Sun, 1: Mon, ... 5: Fri, 6: Sat
+            let daysUntilFriday = (5 - currentDay + 7) % 7;
+            
+            // If today is Friday but after 7am, next weigh-in is next Friday
+            if (daysUntilFriday === 0 && (now.getHours() > 7 || (now.getHours() === 7 && now.getMinutes() > 0))) {
+                daysUntilFriday = 7;
+            }
+
+            nextFriday.setDate(now.getDate() + daysUntilFriday);
+            nextFriday.setHours(7, 0, 0, 0);
+
+            const diff = nextFriday - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const mins = Math.floor((diff / (1000 * 60)) % 60);
+
+            let text = '';
+            if (days > 0) {
+                text = `${days} يوم و ${hours} ساعة`;
+            } else {
+                text = `باقي ${hours} ساعة و ${mins} دقيقة 🔥`;
+            }
+            document.getElementById('fridayCountdown').textContent = text;
+        }
+
+        function calculateEstimatedDays() {
+            // Realistic math:
+            // Remaining kg * 7700 kcal = remaining calorie deficit needed.
+            // With daily activity burn (active ~700 kcal + moderate intuitive reduction ~300 kcal = ~1000 kcal deficit / day or ~0.8kg per week).
+            const lastWeight = state.weighIns.length > 0 ? state.weighIns[state.weighIns.length - 1].weight : state.currentWeight;
+            const remainingKg = Math.max(0, lastWeight - state.targetWeight);
+            
+            // Average safe daily deficit estimated at 800-900 kcal
+            const dailyDeficitEstimate = Math.max(500, state.dailyStats.activeCalories + 150);
+            const daysNeeded = Math.round((remainingKg * 7700) / dailyDeficitEstimate);
+
+            document.getElementById('estimatedDaysDisplay').textContent = `~${daysNeeded} يوم (لو التزمت)`;
+            return daysNeeded;
+        }
+
+        function updateWeightAndProgress() {
+            const lastWeight = state.weighIns.length > 0 ? state.weighIns[state.weighIns.length - 1].weight : state.currentWeight;
+            state.currentWeight = lastWeight;
+
+            document.getElementById('currentWeightDisplay').textContent = lastWeight.toFixed(1);
+            
+            const remainingKg = Math.max(0, lastWeight - state.targetWeight);
+            document.getElementById('remainingKgDisplay').textContent = remainingKg.toFixed(1);
+
+            const totalToLose = state.startWeight - state.targetWeight; // 25kg
+            const lostSoFar = Math.max(0, state.startWeight - lastWeight);
+            const pct = Math.min(100, Math.max(0, Math.round((lostSoFar / totalToLose) * 100)));
+
+            document.getElementById('progressPercentageDisplay').textContent = `${pct}% منجز (${lostSoFar.toFixed(1)} كجم نزول)`;
+            document.getElementById('journeyProgressBar').style.width = `${Math.max(4, pct)}%`;
+
+            calculateEstimatedDays();
+        }
+
+        function updateDailyEffortScore() {
+            // Effort formula based on 3 pillars:
+            // 1. Steps (target 10,000) -> 40%
+            // 2. Active Calories (target 650) -> 40%
+            // 3. Sleep (target 7.5 hrs) -> 20%
+            const stepScore = Math.min(1.2, state.dailyStats.steps / 10000) * 40;
+            const calScore = Math.min(1.2, state.dailyStats.activeCalories / 650) * 40;
+            const sleepScore = Math.min(1.0, state.dailyStats.sleepHours / 7.5) * 20;
+
+            const totalScore = Math.min(100, Math.round(stepScore + calScore + sleepScore));
+
+            document.getElementById('effortScoreText').textContent = `${totalScore}%`;
+
+            // SVG circle dashoffset: circumference is 2 * pi * 42 = 263.89
+            const circumference = 264;
+            const offset = circumference - (circumference * totalScore) / 100;
+            document.getElementById('effortCircle').style.strokeDashoffset = offset;
+
+            // Effort badge
+            const badge = document.getElementById('effortBadge');
+            if (totalScore >= 85) {
+                badge.textContent = "مجهود خارق 🔥";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-neonGreen/20 text-neonGreen border border-neonGreen/30 animate-pulse-slow";
+            } else if (totalScore >= 70) {
+                badge.textContent = "أداء ممتاز ⚡";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-neonCyan/20 text-neonCyan border border-neonCyan/30";
+            } else {
+                badge.textContent = "يوم استشفاء 🛌";
+                badge.className = "text-xs font-bold px-2.5 py-1 rounded-lg bg-neonAmber/20 text-neonAmber border border-neonAmber/30";
+            }
+
+            // Steps display
+            document.getElementById('stepsCountDisplay').textContent = state.dailyStats.steps.toLocaleString();
+            const stepPct = Math.min(100, Math.round((state.dailyStats.steps / 10000) * 100));
+            document.getElementById('stepsProgressBar').style.width = `${stepPct}%`;
+            document.getElementById('distanceDisplay').textContent = `${(state.dailyStats.steps * 0.00075).toFixed(1)} كم`;
+
+            // Calories display
+            document.getElementById('activeCaloriesDisplay').textContent = state.dailyStats.activeCalories;
+            const totalBurn = state.bmr + state.dailyStats.activeCalories;
+            document.getElementById('totalBurnDisplay').textContent = `${totalBurn.toLocaleString()} سعرة`;
+
+            // Sleep display
+            document.getElementById('sleepHoursDisplay').textContent = state.dailyStats.sleepHours;
+            const sleepBadge = document.getElementById('sleepQualityBadge');
+            if (state.dailyStats.sleepHours >= 7.0) {
+                sleepBadge.textContent = "ممتاز (استشفاء عضلي)";
+                sleepBadge.className = "text-neonGreen font-bold bg-neonGreen/10 px-2 py-0.5 rounded";
+            } else if (state.dailyStats.sleepHours >= 5.5) {
+                sleepBadge.textContent = "متوسط (احرص على الراحة)";
+                sleepBadge.className = "text-neonAmber font-bold bg-neonAmber/10 px-2 py-0.5 rounded";
+            } else {
+                sleepBadge.textContent = "قليل (تحتاج تعويض الليلة)";
+                sleepBadge.className = "text-neonPink font-bold bg-neonPink/10 px-2 py-0.5 rounded";
+            }
+        }
+
+        function updateWaterUI() {
+            const cups = state.waterCups;
+            const goal = state.waterGoalCups;
+            const pct = Math.min(100, Math.round((cups / goal) * 100));
+            const liters = (cups * 0.25).toFixed(2);
+
+            document.getElementById('cupsCountText').textContent = `${cups} / ${goal} كوب`;
+            document.getElementById('waterPercentageDisplay').textContent = `${pct}%`;
+            document.getElementById('waterLevelBar').style.height = `${Math.max(10, pct)}%`;
+            document.getElementById('waterLitersText').textContent = `${liters} L`;
+        }
+
+        function updateAthkarUI() {
+            document.getElementById('athkarText').textContent = `"${ATHKAR_LIST[currentDhikrIndex]}"`;
+            document.getElementById('athkarCounterDisplay').textContent = state.athkarCount;
+        }
+
+        // Render Chart
+        function initChart() {
+            const ctx = document.getElementById('journeyChart').getContext('2d');
+            
+            // Labels and data
+            const labels = state.weighIns.map(w => w.date);
+            const actualWeights = state.weighIns.map(w => w.weight);
+
+            // Projected line starting from 110 down to 85 smoothly
+            const projected = [];
+            const weeksCount = Math.max(state.weighIns.length, 6);
+            for (let i = 0; i < weeksCount; i++) {
+                // average drop of ~0.8kg per week
+                projected.push(Math.max(85, +(110 - (i * 0.8)).toFixed(1)));
+            }
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'الوزن الفعلي (كجم)',
+                            data: actualWeights,
+                            borderColor: '#FF007A',
+                            backgroundColor: 'rgba(255, 0, 122, 0.15)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#FF007A',
+                            pointBorderColor: '#FFF',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            tension: 0.25,
+                            fill: false
+                        },
+                        {
+                            label: 'المسار الواقعي المستهدف',
+                            data: projected.slice(0, labels.length),
+                            borderColor: '#00FF87',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 80,
+                            max: 115,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: {
+                                color: '#94A3B8',
+                                font: { family: 'Outfit', weight: 'bold' },
+                                callback: val => `${val} kg`
+                            }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                            ticks: {
+                                color: '#94A3B8',
+                                font: { family: 'Cairo' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#111726',
+                            titleColor: '#F8FAFC',
+                            bodyColor: '#60EFFF',
+                            borderColor: '#1F293D',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: ctx => ` الوزن: ${ctx.parsed.y} كجم`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Setup Event Listeners
+        function setupEvents() {
+            // Dhikr Counter Tap
+            document.getElementById('dhikrClickBtn').addEventListener('click', () => {
+                state.athkarCount++;
+                saveState();
+                updateAthkarUI();
+                playChime();
+            });
+
+            // Rotate Dhikr
+            document.getElementById('nextDhikrBtn').addEventListener('click', () => {
+                currentDhikrIndex = (currentDhikrIndex + 1) % ATHKAR_LIST.length;
+                updateAthkarUI();
+            });
+
+            // Water controls
+            document.getElementById('addCupBtn').addEventListener('click', () => {
+                state.waterCups = Math.min(state.waterGoalCups + 6, state.waterCups + 1);
+                saveState();
+                updateWaterUI();
+                playChime();
+            });
+
+            document.getElementById('addTwoCupsBtn').addEventListener('click', () => {
+                state.waterCups = Math.min(state.waterGoalCups + 6, state.waterCups + 2);
+                saveState();
+                updateWaterUI();
+                playChime();
+            });
+
+            document.getElementById('resetWaterBtn').addEventListener('click', () => {
+                state.waterCups = 0;
+                saveState();
+                updateWaterUI();
+            });
+
+            // Weigh In Modal
+            const weighModal = document.getElementById('weighInModal');
+            document.getElementById('openWeighInBtn').addEventListener('click', () => {
+                document.getElementById('newWeightInput').value = state.currentWeight;
+                weighModal.classList.remove('hidden');
+            });
+            document.getElementById('closeWeighInModal').addEventListener('click', () => {
+                weighModal.classList.add('hidden');
+            });
+            document.getElementById('cancelWeighInBtn').addEventListener('click', () => {
+                weighModal.classList.add('hidden');
+            });
+
+            document.getElementById('weighInForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newW = parseFloat(document.getElementById('newWeightInput').value);
+                if (!newW || isNaN(newW)) return;
+
+                const weekNum = state.weighIns.length;
+                state.weighIns.push({
+                    date: `الأسبوع ${weekNum}`,
+                    weight: newW
+                });
+                state.currentWeight = newW;
+                saveState();
+                
+                updateWeightAndProgress();
+                initChart();
+                weighModal.classList.add('hidden');
+                showToast(`تم تسجيل وزن الجمعة (${newW} كجم) وتحديث المسار بنجاح! 🎉`);
+            });
+
+            // Manual Daily Stats Modal
+            const manualModal = document.getElementById('manualSyncModal');
+            document.getElementById('openManualSyncBtn').addEventListener('click', () => {
+                document.getElementById('inputSteps').value = state.dailyStats.steps;
+                document.getElementById('inputCalories').value = state.dailyStats.activeCalories;
+                document.getElementById('inputSleep').value = state.dailyStats.sleepHours;
+                manualModal.classList.remove('hidden');
+            });
+            document.getElementById('closeManualSyncModal').addEventListener('click', () => {
+                manualModal.classList.add('hidden');
+            });
+
+            document.getElementById('dailyStatsForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const s = parseInt(document.getElementById('inputSteps').value);
+                const c = parseInt(document.getElementById('inputCalories').value);
+                const sl = parseFloat(document.getElementById('inputSleep').value);
+
+                if (!isNaN(s)) state.dailyStats.steps = s;
+                if (!isNaN(c)) state.dailyStats.activeCalories = c;
+                if (!isNaN(sl)) state.dailyStats.sleepHours = sl;
+
+                saveState();
+                updateDailyEffortScore();
+                manualModal.classList.add('hidden');
+                showToast('تم تحديث إحصائيات اليوم بنجاح! ⚡');
+            });
+        }
+
+        // Initialize App
+        // Fetch remote data.json if updated via Apple Shortcut on GitHub
+        async function fetchCloudData() {
+            try {
+                const response = await fetch('./data.json?t=' + Date.now());
+                if (response.ok) {
+                    const cloud = await response.json();
+                    if (cloud.steps) state.dailyStats.steps = cloud.steps;
+                    if (cloud.calories) state.dailyStats.activeCalories = cloud.calories;
+                    if (cloud.sleep) state.dailyStats.sleepHours = cloud.sleep;
+                    if (cloud.weight) {
+                        state.currentWeight = parseFloat(cloud.weight);
+                        const lastEntry = state.weighIns[state.weighIns.length - 1];
+                        if (!lastEntry || Math.abs(lastEntry.weight - state.currentWeight) > 0.05) {
+                            state.weighIns.push({
+                                date: cloud.date || `أسبوع ${state.weighIns.length}`,
+                                weight: state.currentWeight
+                            });
+                        }
+                    }
+                    saveState();
+                    updateWeightAndProgress();
+                    updateDailyEffortScore();
+                    initChart();
+                    showToast('تمت المزامنة الذاتية من الساعة وسحابة GitHub! ☁️⚡');
+                }
+            } catch (err) {
+                console.log('Running in local mode, data.json not loaded yet.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            fetchCloudData();
+            loadState();
+            updateDateHeader();
+            updateFridayCountdown();
+            setInterval(updateFridayCountdown, 60000); // refresh timer every minute
+            updateWeightAndProgress();
+            updateDailyEffortScore();
+            updateWaterUI();
+            updateAthkarUI();
+            initChart();
+            setupEvents();
+        });
+    </script>
+</body>
+</html>
