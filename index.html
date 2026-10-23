@@ -194,41 +194,22 @@
             </div>
         </section>
 
-        <!-- 2. NEW: 4-Mode Interactive Visual Engine (Replaces Boring Chart.js) + Water Reactor -->
+        <!-- 2. THE 4-MODE VISUAL ENGINE + WATER TANK -->
         <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- THE 4-MODE VISUALIZER -->
             <div class="lg:col-span-2 smart-card p-5 sm:p-6 flex flex-col justify-between">
                 <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 mb-5 border-b border-white/10 pb-4">
                     <div>
                         <div class="flex items-center gap-2">
                             <h2 class="text-lg sm:text-xl font-black text-white">محرك تتبع الكتلة التفاعلي</h2>
                             <span id="fridayCountdown" class="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30 font-outfit">...</span>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-0.5">اختر الشكل البصري المفضل لك بدل المخطط التقليدي</p>
-                    </div>
-
-                    <!-- 4 Visual Modes Switcher -->
-                    <div class="grid grid-cols-2 sm:flex rounded-xl bg-black/50 p-1 border border-white/10 gap-1">
-                        <button onclick="setVisualMode('matrix')" id="vmode-matrix" class="px-3 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-400 text-slate-950 transition-all">1. مصفوفة الـ 25 كجم</button>
-                        <button onclick="setVisualMode('cockpit')" id="vmode-cockpit" class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all">2. رادار التسارع</button>
-                        <button onclick="setVisualMode('metro')" id="vmode-metro" class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all">3. مسار المحطات</button>
-                        <button onclick="setVisualMode('battles')" id="vmode-battles" class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all">4. مواجهات الجمعة</button>
-                    </div>
-                </div>
-
-                <!-- Dynamic Container for the 4 Visual Engines -->
-                <div id="visualEngineStage" class="min-h-[310px] flex flex-col justify-center"></div>
-            </div>
-
-            <!-- Interactive 3D Liquid Water Reactor -->
+            <!-- Fully Controllable 3D Liquid Water Reactor -->
             <div class="smart-card p-5 sm:p-6 flex flex-col justify-between relative overflow-hidden">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="text-lg font-black text-white">مفاعل الترطيب 💧</h3>
-                        <p class="text-xs text-gray-400">الهدف: 3.5 لتر (14 كوب) • متزامن</p>
+                        <p class="text-xs text-gray-400">تحكم حر كامل في الزيادة والنقصان • متزامن سحابياً</p>
                     </div>
-                    <span id="waterPercentageDisplay" class="text-sm font-black font-outfit px-3 py-1 rounded-xl bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">50%</span>
+                    <span id="waterPercentageDisplay" class="text-sm font-black font-outfit px-3 py-1 rounded-xl bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">0%</span>
                 </div>
 
                 <div class="my-4 flex items-center gap-5 justify-center">
@@ -236,30 +217,45 @@
                         <div class="absolute inset-y-0 right-2 flex flex-col justify-between py-3 z-20 pointer-events-none text-[9px] font-outfit text-cyan-200/50 font-bold">
                             <span>3.5L</span><span>2.5L</span><span>1.5L</span><span>0.5L</span>
                         </div>
-                        <div id="waterLevelBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-300 transition-all duration-700 flex items-center justify-center" style="height: 50%;">
+                        <div id="waterLevelBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-blue-600 via-cyan-500 to-cyan-300 transition-all duration-700 flex items-center justify-center" style="height: 0%;">
                             <svg class="absolute -top-4 left-0 w-[200%] h-5 wave-1 fill-cyan-300/80" viewBox="0 0 1200 120" preserveAspectRatio="none">
                                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
                             </svg>
-                            <span id="waterLitersText" class="relative z-20 text-xs font-black font-outfit text-slate-950 bg-white/85 px-2.5 py-0.5 rounded-full shadow">1.50 L</span>
+                            <span id="waterLitersText" class="relative z-20 text-xs font-black font-outfit text-slate-950 bg-white/85 px-2.5 py-0.5 rounded-full shadow">0.00 L</span>
                         </div>
                     </div>
 
-                    <div class="flex-1">
-                        <div class="text-[11px] font-bold text-gray-400 mb-2">اضغط على أي كوب لتحديده:</div>
-                        <div id="cupsGridContainer" class="grid grid-cols-7 gap-1.5"></div>
-                        <div class="mt-3 flex items-center justify-between text-xs">
-                            <span class="text-gray-400">المشروب اليوم:</span>
-                            <span id="cupsCountText" class="font-black text-cyan-300 font-outfit">6 / 14 كوب</span>
+                    <div class="flex-1 space-y-3">
+                        <div>
+                            <div class="text-[11px] font-bold text-gray-400 mb-1.5">اضغط على أي رقم لتحديده أو إلغائه:</div>
+                            <div id="cupsGridContainer" class="grid grid-cols-7 gap-1.5"></div>
+                        </div>
+
+                        <!-- Stepper & Direct Editable Input -->
+                        <div class="bg-black/40 p-2.5 rounded-2xl border border-white/10 flex items-center justify-between gap-2">
+                            <span class="text-xs text-gray-400 font-bold">عدد الأكواب:</span>
+                            <div class="flex items-center gap-1.5">
+                                <button type="button" id="stepperMinusBtn" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-rose-500/20 text-gray-200 hover:text-rose-300 font-black text-sm active:scale-90 transition-all flex items-center justify-center select-none">-</button>
+                                <input type="number" id="directCupsInput" min="0" max="30" value="0" class="w-12 text-center bg-black/60 border border-white/20 focus:border-cyan-400 text-cyan-300 font-outfit font-black text-sm py-1 rounded-xl outline-none">
+                                <button type="button" id="stepperPlusBtn" class="w-8 h-8 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-sm active:scale-90 transition-all flex items-center justify-center shadow select-none">+</button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs px-1">
+                            <span class="text-gray-400">الإجمالي باللتر:</span>
+                            <span id="cupsCountText" class="font-black text-cyan-300 font-outfit">0 / 14 كوب</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-4 gap-2">
-                    <button id="addCupBtn" class="col-span-2 py-2.5 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-black text-xs sm:text-sm active:scale-95 transition-all">
-                        + كوب (250 مل)
+                <!-- Fast Quick Actions -->
+                <div class="grid grid-cols-4 gap-2 pt-1 border-t border-white/5">
+                    <button type="button" id="quickAdd1Btn" class="col-span-2 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black text-xs sm:text-sm active:scale-95 transition-all shadow-lg shadow-cyan-400/20 flex items-center justify-center gap-1">
+                        <span>+ كوب</span>
+                        <span class="text-[10px] bg-slate-950/20 px-1.5 py-0.5 rounded-md font-outfit">250ml</span>
                     </button>
-                    <button id="addTwoCupsBtn" class="py-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-200 font-bold text-xs active:scale-95 transition-all">+500 مل</button>
-                    <button id="minusCupBtn" class="py-2.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 font-bold text-xs active:scale-95 transition-all">- كوب</button>
+                    <button type="button" id="quickAdd2Btn" class="py-2.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/30 text-cyan-200 font-bold text-xs active:scale-95 transition-all">+500ml</button>
+                    <button type="button" id="quickResetBtn" class="py-2.5 rounded-xl bg-white/5 hover:bg-rose-500/20 border border-white/10 text-gray-400 hover:text-rose-300 font-bold text-xs active:scale-95 transition-all">تصفير</button>
                 </div>
             </div>
         </section>
@@ -272,7 +268,7 @@
                         <span class="text-xs font-bold text-gray-400">تناغم الساعة</span>
                         <h3 class="text-base font-black text-white">حلقات الإنجاز الثلاث</h3>
                     </div>
-                    <span class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">مجهود خارق 🔥</span>
+                    <span id="effortBadge" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-400/15 text-emerald-300 border border-emerald-400/30">مجهود خارق 🔥</span>
                 </div>
                 <div class="relative w-36 h-36 mx-auto my-2 flex items-center justify-center">
                     <svg class="w-full h-full" viewBox="0 0 140 140">
@@ -342,7 +338,7 @@
             <div class="smart-card p-5 flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-gray-400">الاستشفاء العضلي</span>
-                    <span class="px-2.5 py-1 rounded-lg bg-emerald-400/10 text-emerald-300 text-xs font-bold">ممتاز</span>
+                    <span id="sleepQualityBadge" class="px-2.5 py-1 rounded-lg bg-emerald-400/10 text-emerald-300 text-xs font-bold">ممتاز</span>
                 </div>
                 <div class="my-4">
                     <div class="flex items-baseline gap-2">
@@ -412,7 +408,7 @@
             <form id="cloudConfigForm" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">اسم المستودع (<code>username/repo</code>)</label>
-                    <input type="text" id="ghRepoInput" placeholder="username/fitness-tracker" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-sm px-4 py-2.5 rounded-xl outline-none" dir="ltr">
+                    <input type="text" id="ghRepoInput" placeholder="b67k/health-tracker" class="w-full bg-black/60 border border-white/15 text-white font-outfit text-sm px-4 py-2.5 rounded-xl outline-none" dir="ltr">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 mb-1">مسار الملف</label>
@@ -438,17 +434,17 @@
         const INITIAL_STATE = {
             startWeight: 110.0,
             targetWeight: 85.0,
-            currentWeight: 107.6,
+            currentWeight: 107.0,
             bmr: 2120,
             waterCups: 6,
             waterGoalCups: 14,
             athkarCount: 33,
-            dailyStats: { steps: 10450, activeCalories: 720, sleepHours: 7.5 },
+            dailyStats: { steps: 1648, activeCalories: 244, sleepHours: 8.3 },
             weighIns: [
                 { date: 'البداية', weight: 110.0 },
                 { date: 'الأسبوع 1', weight: 109.1 },
                 { date: 'الأسبوع 2', weight: 108.3 },
-                { date: 'الأسبوع 3', weight: 107.6 }
+                { date: 'الأسبوع 3', weight: 107.0 }
             ]
         };
 
@@ -470,6 +466,7 @@
             localStorage.setItem('selected_theme_85', themeName);
             ['cyber', 'glass', 'obsidian'].forEach(t => {
                 const btn = document.getElementById(`theme-${t}`);
+                if (!btn) return;
                 btn.className = (t === themeName)
                     ? "px-3 py-1 rounded-lg text-xs font-extrabold transition-all bg-cyan-400 text-slate-950"
                     : "px-3 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-white transition-all";
@@ -481,6 +478,7 @@
             localStorage.setItem('selected_vmode_85', mode);
             ['matrix', 'cockpit', 'metro', 'battles'].forEach(m => {
                 const btn = document.getElementById(`vmode-${m}`);
+                if (!btn) return;
                 btn.className = (m === mode)
                     ? "px-3 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-400 text-slate-950 transition-all"
                     : "px-3 py-1.5 rounded-lg text-xs font-bold text-gray-400 hover:text-white transition-all";
@@ -488,9 +486,10 @@
             renderVisualEngine();
         }
 
-        // ================= THE 4 ELITE VISUAL ENGINES =================
         function renderVisualEngine() {
             const stage = document.getElementById('visualEngineStage');
+            if (!stage) return;
+
             const currentW = state.weighIns.length > 0
                 ? parseFloat(state.weighIns[state.weighIns.length - 1].weight)
                 : parseFloat(state.currentWeight);
@@ -501,7 +500,6 @@
             const remainingKg = Math.max(0, +(currentW - state.targetWeight).toFixed(2));
             const pct = Math.min(100, Math.max(0, Math.round((lostSoFar / totalToLose) * 100)));
 
-            // 1. 25-KG BURN MATRIX (Every 100g melts 10% of the active capsule!)
             if (currentVisualMode === 'matrix') {
                 const fullBurnedKilos = Math.floor(lostSoFar);
                 const activeKiloProgress = Math.round((lostSoFar - fullBurnedKilos) * 100);
@@ -512,7 +510,6 @@
                     const fromW = 110 - i;
                     const toW = 109 - i;
                     if (i < fullBurnedKilos) {
-                        // Completely burned kilo
                         cellsHtml += `
                             <div class="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 flex flex-col justify-between relative overflow-hidden">
                                 <div class="flex justify-between items-center text-[10px] font-outfit font-bold text-emerald-300">
@@ -523,7 +520,6 @@
                                 <div class="w-full h-1 bg-emerald-400 rounded-full mt-1.5"></div>
                             </div>`;
                     } else if (i === fullBurnedKilos && currentW > state.targetWeight) {
-                        // Currently melting kilo!
                         cellsHtml += `
                             <div class="p-2.5 rounded-xl bg-pink-500/15 border-2 border-pink-500 active-burn-cell flex flex-col justify-between relative overflow-hidden">
                                 <div class="flex justify-between items-center text-[10px] font-outfit font-black text-pink-300">
@@ -536,7 +532,6 @@
                                 </div>
                             </div>`;
                     } else {
-                        // Locked future kilo
                         cellsHtml += `
                             <div class="p-2.5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col justify-between opacity-60">
                                 <div class="flex justify-between items-center text-[10px] font-outfit font-bold text-gray-400">
@@ -556,7 +551,7 @@
                                 <span class="text-3xl font-black font-outfit text-white">${currentW.toFixed(1)} <small class="text-xs text-gray-400">kg</small></span>
                                 <div class="text-xs">
                                     <div class="font-extrabold text-emerald-400">تم تدمير ${fullBurnedKilos} كبسولات كاملة (${lostSoFar} كجم)</div>
-                                    <div class="text-gray-300">باقي <span class="text-pink-400 font-black font-outfit">${gramsLeftForNextKilo} جرام</span> فقط لكسر حاجز الـ ${109 - fullBurnedKilos} كجم!</div>
+                                    <div class="text-gray-300">باقي <span class="text-pink-400 font-black font-outfit">${gramsLeftForNextKilo} جرام</span> لكسر حاجز الـ ${109 - fullBurnedKilos} كجم!</div>
                                 </div>
                             </div>
                             <span class="text-xs font-black font-outfit px-3 py-1.5 rounded-xl bg-pink-500/15 text-pink-300 border border-pink-500/30">
@@ -565,14 +560,11 @@
                         </div>
                         <div class="grid grid-cols-5 gap-2">${cellsHtml}</div>
                     </div>`;
-            }
-
-            // 2. TELEMETRY RADIAL COCKPIT (270-Degree Speedometer + Fat Kcal Burned)
-            else if (currentVisualMode === 'cockpit') {
+            } else if (currentVisualMode === 'cockpit') {
                 const totalKcalBurned = Math.round(lostSoFar * 7700);
                 const weeksCount = Math.max(1, state.weighIns.length - 1);
                 const weeklyVelocity = +(lostSoFar / weeksCount).toFixed(2);
-                const arcLength = 377; // r=80, 270 deg arc
+                const arcLength = 377;
                 const dashOffset = arcLength - (arcLength * (pct / 100));
 
                 stage.innerHTML = `
@@ -620,10 +612,7 @@
                             </div>
                         </div>
                     </div>`;
-            }
-
-            // 3. MILESTONE METRO EXPEDITION (5 Stages x 5kg)
-            else if (currentVisualMode === 'metro') {
+            } else if (currentVisualMode === 'metro') {
                 const stages = [
                     { title: 'المرحلة 1: كسر الـ 105', start: 110, end: 105 },
                     { title: 'المرحلة 2: توديع الثلاث خانات (100)', start: 105, end: 100 },
@@ -660,10 +649,7 @@
                             </div>
                         </div>`;
                 }).join('')}</div>`;
-            }
-
-            // 4. WEEKLY BATTLE CARDS (Gram-level comparison cards)
-            else if (currentVisualMode === 'battles') {
+            } else if (currentVisualMode === 'battles') {
                 const cardsHtml = state.weighIns.map((w, idx) => {
                     if (idx === 0) {
                         return `
@@ -724,6 +710,7 @@
 
         function showToast(msg) {
             const toast = document.getElementById('toastNotification');
+            if (!toast) return;
             document.getElementById('toastMessage').textContent = msg;
             toast.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => toast.classList.add('opacity-0', 'pointer-events-none'), 2600);
@@ -761,7 +748,8 @@
             const diff = nextFriday - now;
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-            document.getElementById('fridayCountdown').textContent = `ميزان الجمعة: باقي ${days}ي و ${hours}س`;
+            const el = document.getElementById('fridayCountdown');
+            if (el) el.textContent = `ميزان الجمعة: باقي ${days}ي و ${hours}س`;
         }
 
         function updateDailyEffortScore() {
@@ -776,63 +764,107 @@
             const sleepRatio = Math.min(1, cleanSleep / 7.5);
 
             const totalScore = Math.round((stepRatio * 40) + (calRatio * 40) + (sleepRatio * 20));
-            document.getElementById('effortScoreText').textContent = `${totalScore}%`;
+            const effortScoreEl = document.getElementById('effortScoreText');
+            if (effortScoreEl) effortScoreEl.textContent = `${totalScore}%`;
 
-            document.getElementById('ringSteps').style.strokeDashoffset = 364.4 - (364.4 * stepRatio);
-            document.getElementById('ringCalories').style.strokeDashoffset = 276.5 - (276.5 * calRatio);
-            document.getElementById('ringSleep').style.strokeDashoffset = 188.5 - (188.5 * sleepRatio);
+            const rSteps = document.getElementById('ringSteps');
+            const rCal = document.getElementById('ringCalories');
+            const rSleep = document.getElementById('ringSleep');
+            if (rSteps) rSteps.style.strokeDashoffset = 364.4 - (364.4 * stepRatio);
+            if (rCal) rCal.style.strokeDashoffset = 276.5 - (276.5 * calRatio);
+            if (rSleep) rSleep.style.strokeDashoffset = 188.5 - (188.5 * sleepRatio);
 
-            const rawStepPct = Math.round((cleanSteps / 10000) * 100);
-            document.getElementById('stepsCountDisplay').textContent = cleanSteps.toLocaleString('en-US');
-            document.getElementById('stepsPctDisplay').textContent = `${rawStepPct}%`;
-            document.getElementById('stepsProgressBar').style.width = `${Math.min(100, rawStepPct)}%`;
-            document.getElementById('distanceDisplay').textContent = `${(cleanSteps * 0.00075).toFixed(1)} كم`;
-            document.getElementById('activeCaloriesDisplay').textContent = cleanCal.toLocaleString('en-US');
-            document.getElementById('totalBurnDisplay').textContent = `${(state.bmr + cleanCal).toLocaleString('en-US')} سعرة`;
-            document.getElementById('sleepHoursDisplay').textContent = cleanSleep;
-        }
-
+        // ================= FULLY RESPONSIVE WATER ENGINE =================
         function updateWaterUI() {
-            const cups = state.waterCups;
-            const goal = state.waterGoalCups;
+            const cups = Math.max(0, parseInt(state.waterCups) || 0);
+            const goal = parseInt(state.waterGoalCups) || 14;
             const pct = Math.min(100, Math.round((cups / goal) * 100));
-            document.getElementById('cupsCountText').textContent = `${cups} / ${goal} كوب`;
-            document.getElementById('waterPercentageDisplay').textContent = `${pct}%`;
-            document.getElementById('waterLevelBar').style.height = `${Math.max(12, pct)}%`;
-            document.getElementById('waterLitersText').textContent = `${(cups * 0.25).toFixed(2)} L`;
+            const liters = (cups * 0.25).toFixed(2);
 
-            let html = '';
-            for (let i = 1; i <= goal; i++) {
-                const filled = i <= cups;
-                html += `<button onclick="setExactCups(${i})" class="h-8 rounded-lg border text-[10px] font-outfit font-bold transition-all flex items-center justify-center ${
-                    filled ? 'bg-cyan-400 text-slate-950 border-cyan-300 scale-105' : 'bg-white/5 text-gray-400 border-white/10'
-                }">${i}</button>`;
+            const countEl = document.getElementById('cupsCountText');
+            if (countEl) countEl.textContent = `${cups} / ${goal} كوب (${liters}L)`;
+            
+            const pctEl = document.getElementById('waterPercentageDisplay');
+            if (pctEl) pctEl.textContent = `${pct}%`;
+            
+            const barEl = document.getElementById('waterLevelBar');
+            if (barEl) barEl.style.height = `${Math.max(cups > 0 ? 12 : 0, pct)}%`;
+            
+            const litersEl = document.getElementById('waterLitersText');
+            if (litersEl) litersEl.textContent = `${liters} L`;
+
+            const inputEl = document.getElementById('directCupsInput');
+            if (inputEl && document.activeElement !== inputEl) {
+                inputEl.value = cups;
             }
-            document.getElementById('cupsGridContainer').innerHTML = html;
+
+            // Interactive Cups Matrix with dynamic selection & unselection
+            const grid = document.getElementById('cupsGridContainer');
+            if (grid) {
+                let html = '';
+                for (let i = 1; i <= goal; i++) {
+                    const filled = i <= cups;
+                    html += `<button type="button" data-cup="${i}" class="water-matrix-cup h-8 rounded-lg border text-[10px] font-outfit font-bold transition-all flex items-center justify-center cursor-pointer select-none active:scale-95 ${
+                        filled ? 'bg-cyan-400 text-slate-950 border-cyan-300 shadow-sm shadow-cyan-400/40 scale-105' : 'bg-white/5 text-gray-400 border-white/10 hover:border-cyan-400/40 hover:text-white'
+                    }" title="كوب ${i}">${i}</button>`;
+                }
+                grid.innerHTML = html;
+            }
         }
 
         function setExactCups(n) {
-            state.waterCups = (state.waterCups === n) ? n - 1 : n;
+            const current = parseInt(state.waterCups) || 0;
+            // Clicking current highest cup deselects it back by 1
+            state.waterCups = (current === n) ? Math.max(0, n - 1) : Math.max(0, n);
             saveState(true);
             updateWaterUI();
-            playChime(700);
+            playChime(640 + (state.waterCups * 15));
+        }
+
+        function modifyWaterCups(delta) {
+            const current = parseInt(state.waterCups) || 0;
+            state.waterCups = Math.max(0, Math.min(30, current + delta));
+            saveState(true);
+            updateWaterUI();
+            playChime(delta > 0 ? 700 : 500);
+        }
+
+        function resetWaterCups() {
+            state.waterCups = 0;
+            saveState(true);
+            updateWaterUI();
+            showToast('تم تصفير عداد الماء');
+            playChime(420);
         }
 
         function updateAthkarUI() {
-            document.getElementById('athkarText').textContent = `"${ATHKAR_LIST[currentDhikrIndex]}"`;
-            document.getElementById('athkarCounterDisplay').textContent = state.athkarCount;
+            const athkarTextEl = document.getElementById('athkarText');
+            if (athkarTextEl) athkarTextEl.textContent = `"${ATHKAR_LIST[currentDhikrIndex]}"`;
+            const athkarCountEl = document.getElementById('athkarCounterDisplay');
+            if (athkarCountEl) athkarCountEl.textContent = state.athkarCount;
             const inSet = state.athkarCount % 33;
-            document.getElementById('athkarSetBadge').textContent = `${inSet}/33`;
-            document.getElementById('athkarRing').style.strokeDashoffset = 175.9 - (175.9 * (inSet / 33));
+            const setBadge = document.getElementById('athkarSetBadge');
+            if (setBadge) setBadge.textContent = `${inSet}/33`;
+            const ring = document.getElementById('athkarRing');
+            if (ring) ring.style.strokeDashoffset = 175.9 - (175.9 * (inSet / 33));
         }
 
-        // Cloud Sync functions
         function getCloudConfig() {
             try { return JSON.parse(localStorage.getItem('gh_cloud_config_85') || 'null'); } catch (e) { return null; }
         }
 
         function updateSyncBadge(status, text) {
-            document.getElementById('syncStatusText').textContent = text;
+            const txt = document.getElementById('syncStatusText');
+            if (txt) txt.textContent = text;
+            const badge = document.getElementById('syncStatusBadge');
+            if (!badge) return;
+            if (status === 'synced') {
+                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
+            } else if (status === 'syncing') {
+                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/30";
+            } else {
+                badge.className = "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
+            }
         }
 
         async function fetchCloudData() {
@@ -840,36 +872,66 @@
             try {
                 let cloud = null;
                 if (cfg && cfg.repo && cfg.token) {
-                    const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path || 'data.json'}`, {
-                        headers: { 'Authorization': `Bearer ${cfg.token}`, 'Accept': 'application/vnd.github.v3+json' }
+                    updateSyncBadge('syncing', 'جاري جلب أحدث بيانات بدون كاش...');
+                    const res = await fetch(`https://api.github.com/repos/${cfg.repo}/contents/${cfg.path || 'data.json'}?nocache=` + Date.now(), {
+                        headers: { 
+                            'Authorization': `Bearer ${cfg.token}`, 
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Cache-Control': 'no-cache'
+                        }
                     });
                     if (res.ok) {
                         const meta = await res.json();
                         cloud = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g, '')))));
                     }
                 } else {
-                    const res = await fetch('./data.json?t=' + Date.now());
+                    const res = await fetch('./data.json?t=' + Date.now(), { 
+                        cache: 'no-store',
+                        headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+                    });
                     if (res.ok) cloud = await res.json();
                 }
 
                 if (cloud) {
-                    if (cloud.steps !== undefined) state.dailyStats.steps = Math.round(parseFloat(cloud.steps)) || 0;
-                    if (cloud.calories !== undefined) state.dailyStats.activeCalories = Math.round(parseFloat(cloud.calories)) || 0;
-                    if (cloud.sleep !== undefined) {
-                        let s = parseFloat(cloud.sleep) || 0;
-                        if (s > 24) s = s / 3600;
-                        state.dailyStats.sleepHours = Number(s.toFixed(1));
+                    if (cloud.steps !== undefined && cloud.steps !== '') {
+                        state.dailyStats.steps = Math.round(parseFloat(cloud.steps)) || 0;
                     }
-                    if (cloud.waterCups !== undefined) state.waterCups = parseInt(cloud.waterCups) || 0;
-                    if (cloud.athkarCount !== undefined) state.athkarCount = parseInt(cloud.athkarCount) || 0;
-                    if (Array.isArray(cloud.weighIns) && cloud.weighIns.length > 0) state.weighIns = cloud.weighIns;
-                    if (cloud.weight !== undefined) state.currentWeight = Number(parseFloat(cloud.weight).toFixed(1));
+                    if (cloud.calories !== undefined && cloud.calories !== '') {
+                        state.dailyStats.activeCalories = Math.round(parseFloat(cloud.calories)) || 0;
+                    }
+                    
+                    // Multi-Source Sleep Handler: Ignore empty strings, handle seconds/hours correctly
+                    if (cloud.sleep !== undefined && cloud.sleep !== '' && cloud.sleep !== null) {
+                        let parsedSleep = parseFloat(cloud.sleep);
+                        if (!isNaN(parsedSleep) && parsedSleep > 0) {
+                            if (parsedSleep > 24) parsedSleep = parsedSleep / 3600;
+                            state.dailyStats.sleepHours = Number(parsedSleep.toFixed(1));
+                        }
+                    }
+
+                    if (cloud.waterCups !== undefined && cloud.waterCups !== '') {
+                        state.waterCups = parseInt(cloud.waterCups) || 0;
+                    }
+                    if (cloud.athkarCount !== undefined && cloud.athkarCount !== '') {
+                        state.athkarCount = parseInt(cloud.athkarCount) || 0;
+                    }
+                    if (Array.isArray(cloud.weighIns) && cloud.weighIns.length > 0) {
+                        state.weighIns = cloud.weighIns;
+                    }
+                    if (cloud.weight !== undefined && cloud.weight !== '') {
+                        const parsedW = parseFloat(cloud.weight);
+                        if (!isNaN(parsedW) && parsedW > 0) {
+                            state.currentWeight = Number(parsedW.toFixed(1));
+                        }
+                    }
 
                     saveState(false);
                     refreshAllUI();
-                    updateSyncBadge('synced', cfg ? 'متزامن بين الجوالات ✓' : 'تمت القراءة');
+                    updateSyncBadge('synced', cfg ? 'متزامن بين الجوالات ✓' : 'تم سحب أحدث بيانات ✓');
                 }
-            } catch (e) {}
+            } catch (e) {
+                updateSyncBadge('local', 'وضع محلي');
+            }
         }
 
         function scheduleCloudPush() {
@@ -883,39 +945,61 @@
             const cfg = getCloudConfig();
             if (!cfg || !cfg.repo || !cfg.token) return;
             try {
+                updateSyncBadge('syncing', 'جاري رفع التحديث للسحابة...');
                 const apiUrl = `https://api.github.com/repos/${cfg.repo}/contents/${cfg.path || 'data.json'}`;
                 let sha = null, existing = {};
-                const getRes = await fetch(apiUrl, { headers: { 'Authorization': `Bearer ${cfg.token}` } });
+                const getRes = await fetch(apiUrl + '?nocache=' + Date.now(), { 
+                    headers: { 
+                        'Authorization': `Bearer ${cfg.token}`,
+                        'Cache-Control': 'no-cache'
+                    } 
+                });
                 if (getRes.ok) {
                     const meta = await getRes.json();
                     sha = meta.sha;
                     existing = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g, '')))));
                 }
+
+                // Preserve sleep and Apple Health metrics if already recorded
+                const sleepToUpload = (state.dailyStats.sleepHours && state.dailyStats.sleepHours > 0) 
+                    ? state.dailyStats.sleepHours 
+                    : (existing.sleep || "");
+
                 const payload = {
                     ...existing,
-                    steps: state.dailyStats.steps,
-                    calories: state.dailyStats.activeCalories,
-                    sleep: state.dailyStats.sleepHours,
-                    weight: state.currentWeight,
+                    steps: String(state.dailyStats.steps),
+                    calories: String(state.dailyStats.activeCalories),
+                    sleep: String(sleepToUpload),
+                    weight: String(state.currentWeight),
                     waterCups: state.waterCups,
                     athkarCount: state.athkarCount,
-                    weighIns: state.weighIns
+                    weighIns: state.weighIns,
+                    date: existing.date || new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }),
+                    lastClientSync: Date.now()
                 };
+
                 const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-                await fetch(apiUrl, {
+                const putRes = await fetch(apiUrl, {
                     method: 'PUT',
                     headers: { 'Authorization': `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: 'Sync dashboard', content, ...(sha ? { sha } : {}) })
+                    body: JSON.stringify({ message: 'Sync from device dashboard', content, ...(sha ? { sha } : {}) })
                 });
-                updateSyncBadge('synced', 'تمت المزامنة ☁️✓');
-            } catch (e) {}
+
+                if (putRes.ok) {
+                    updateSyncBadge('synced', 'متزامن بين الجوالات ✓');
+                } else {
+                    updateSyncBadge('local', 'تحقق من صلاحية Token');
+                }
+            } catch (e) {
+                updateSyncBadge('local', 'تعذر الرفع للسحابة');
+            }
         }
 
         function refreshAllUI() {
             updateDailyEffortScore();
             updateWaterUI();
             updateAthkarUI();
-            setVisualMode(currentVisualMode);
+            renderVisualEngine();
         }
 
         function setupEvents() {
@@ -934,95 +1018,236 @@
                 saveState(true);
                 updateAthkarUI();
             });
-            document.getElementById('addCupBtn').addEventListener('click', () => {
-                state.waterCups = Math.min(20, state.waterCups + 1);
-                saveState(true);
-                updateWaterUI();
-                playChime(660);
+
+            // Direct input & controls for water cups
+            const cupsInput = document.getElementById('directCupsInput');
+            if (cupsInput) {
+                const handleInputChange = (e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val)) {
+                        state.waterCups = Math.max(0, Math.min(30, val));
+                        saveState(true);
+                        updateWaterUI();
+                        playChime(650);
+                    }
+                };
+                cupsInput.addEventListener('change', handleInputChange);
+                cupsInput.addEventListener('input', handleInputChange);
+            }
+
+            const plusBtn = document.getElementById('stepperPlusBtn');
+            if (plusBtn) plusBtn.addEventListener('click', () => modifyWaterCups(1));
+
+            const minusBtn = document.getElementById('stepperMinusBtn');
+            if (minusBtn) minusBtn.addEventListener('click', () => modifyWaterCups(-1));
+
+            const qAdd1 = document.getElementById('quickAdd1Btn');
+            if (qAdd1) qAdd1.addEventListener('click', () => modifyWaterCups(1));
+
+            const qAdd2 = document.getElementById('quickAdd2Btn');
+            if (qAdd2) qAdd2.addEventListener('click', () => modifyWaterCups(2));
+
+            const qReset = document.getElementById('quickResetBtn');
+            if (qReset) qReset.addEventListener('click', resetWaterCups);
+
+            const cupsGrid = document.getElementById('cupsGridContainer');
+            if (cupsGrid) {
+                cupsGrid.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.water-matrix-cup');
+                    if (btn && btn.dataset.cup) {
+                        setExactCups(parseInt(btn.dataset.cup));
+                    }
+                });
+            }
+
+            document.getElementById('forceSyncBtn').addEventListener('click', () => {
+                fetchCloudData();
+                showToast('جاري سحب أحدث البيانات...');
             });
-            document.getElementById('addTwoCupsBtn').addEventListener('click', () => {
-                state.waterCups = Math.min(20, state.waterCups + 2);
-                saveState(true);
-                updateWaterUI();
-            });
-            document.getElementById('minusCupBtn').addEventListener('click', () => {
-                state.waterCups = Math.max(0, state.waterCups - 1);
-                saveState(true);
-                updateWaterUI();
-            });
-            document.getElementById('forceSyncBtn').addEventListener('click', fetchCloudData);
+            }
+
+            const nextDhikrBtn = document.getElementById('nextDhikrBtn');
+            if (nextDhikrBtn) {
+                nextDhikrBtn.addEventListener('click', () => {
+                    currentDhikrIndex = (currentDhikrIndex + 1) % ATHKAR_LIST.length;
+                    updateAthkarUI();
+                });
+            }
+
+            const resetDhikrBtn = document.getElementById('resetDhikrBtn');
+            if (resetDhikrBtn) {
+                resetDhikrBtn.addEventListener('click', () => {
+                    state.athkarCount = 0;
+                    saveState(true);
+                    updateAthkarUI();
+                    showToast('تم تصفير عداد الأذكار');
+                });
+            }
+
+            const addCupBtn = document.getElementById('addCupBtn');
+            if (addCupBtn) {
+                addCupBtn.addEventListener('click', () => {
+                    state.waterCups = Math.min(20, state.waterCups + 1);
+                    saveState(true);
+                    updateWaterUI();
+                    playChime(660);
+                });
+            }
+
+            const addTwoCupsBtn = document.getElementById('addTwoCupsBtn');
+            if (addTwoCupsBtn) {
+                addTwoCupsBtn.addEventListener('click', () => {
+                    state.waterCups = Math.min(20, state.waterCups + 2);
+                    saveState(true);
+                    updateWaterUI();
+                    playChime(740);
+                });
+            }
+
+            const minusCupBtn = document.getElementById('minusCupBtn');
+            if (minusCupBtn) {
+                minusCupBtn.addEventListener('click', () => {
+                    state.waterCups = Math.max(0, state.waterCups - 1);
+                    saveState(true);
+                    updateWaterUI();
+                });
+            }
+
+            const forceSyncBtn = document.getElementById('forceSyncBtn');
+            if (forceSyncBtn) {
+                forceSyncBtn.addEventListener('click', () => {
+                    fetchCloudData();
+                    showToast('تم فحص وتحديث البيانات من السحابة بدون كاش 🔄');
+                });
+            }
 
             const weighModal = document.getElementById('weighInModal');
-            document.getElementById('openWeighInBtn').addEventListener('click', () => {
-                document.getElementById('newWeightInput').value = state.currentWeight;
-                weighModal.classList.remove('hidden');
-            });
-            document.getElementById('closeWeighInModal').addEventListener('click', () => weighModal.classList.add('hidden'));
-            document.getElementById('cancelWeighInBtn').addEventListener('click', () => weighModal.classList.add('hidden'));
-            document.getElementById('weighInForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const newW = parseFloat(document.getElementById('newWeightInput').value);
-                if (!newW || isNaN(newW)) return;
-                state.weighIns.push({ date: `الأسبوع ${state.weighIns.length}`, weight: newW });
-                state.currentWeight = newW;
-                saveState(true);
-                refreshAllUI();
-                weighModal.classList.add('hidden');
-                showToast(`تم تحديث الوزن إلى ${newW} كجم! 🎉`);
-            });
+            const openWeighBtn = document.getElementById('openWeighInBtn');
+            if (openWeighBtn && weighModal) {
+                openWeighBtn.addEventListener('click', () => {
+                    document.getElementById('newWeightInput').value = state.currentWeight;
+                    weighModal.classList.remove('hidden');
+                });
+            }
+
+            const closeWeighBtn = document.getElementById('closeWeighInModal');
+            if (closeWeighBtn && weighModal) {
+                closeWeighBtn.addEventListener('click', () => weighModal.classList.add('hidden'));
+            }
+
+            const cancelWeighBtn = document.getElementById('cancelWeighInBtn');
+            if (cancelWeighBtn && weighModal) {
+                cancelWeighBtn.addEventListener('click', () => weighModal.classList.add('hidden'));
+            }
+
+            const weighForm = document.getElementById('weighInForm');
+            if (weighForm && weighModal) {
+                weighForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const newW = parseFloat(document.getElementById('newWeightInput').value);
+                    if (!newW || isNaN(newW)) return;
+                    state.weighIns.push({ date: `الأسبوع ${state.weighIns.length}`, weight: newW });
+                    state.currentWeight = newW;
+                    saveState(true);
+                    refreshAllUI();
+                    weighModal.classList.add('hidden');
+                    showToast(`تم تسجيل وزن ${newW} كجم وتحديث المسار! 🚀`);
+                });
+            }
 
             const manualModal = document.getElementById('manualSyncModal');
-            document.getElementById('openManualSyncBtn').addEventListener('click', () => {
-                document.getElementById('inputSteps').value = state.dailyStats.steps;
-                document.getElementById('inputCalories').value = state.dailyStats.activeCalories;
-                document.getElementById('inputSleep').value = state.dailyStats.sleepHours;
-                manualModal.classList.remove('hidden');
-            });
-            document.getElementById('closeManualSyncModal').addEventListener('click', () => manualModal.classList.add('hidden'));
-            document.getElementById('dailyStatsForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                state.dailyStats.steps = parseInt(document.getElementById('inputSteps').value) || 0;
-                state.dailyStats.activeCalories = parseInt(document.getElementById('inputCalories').value) || 0;
-                state.dailyStats.sleepHours = parseFloat(document.getElementById('inputSleep').value) || 0;
-                saveState(true);
-                refreshAllUI();
-                manualModal.classList.add('hidden');
-            });
+            const openManualBtn = document.getElementById('openManualSyncBtn');
+            if (openManualBtn && manualModal) {
+                openManualBtn.addEventListener('click', () => {
+                    document.getElementById('inputSteps').value = state.dailyStats.steps;
+                    document.getElementById('inputCalories').value = state.dailyStats.activeCalories;
+                    document.getElementById('inputSleep').value = state.dailyStats.sleepHours;
+                    manualModal.classList.remove('hidden');
+                });
+            }
+
+            const closeManualBtn = document.getElementById('closeManualSyncModal');
+            if (closeManualBtn && manualModal) {
+                closeManualBtn.addEventListener('click', () => manualModal.classList.add('hidden'));
+            }
+
+            const dailyForm = document.getElementById('dailyStatsForm');
+            if (dailyForm && manualModal) {
+                dailyForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    state.dailyStats.steps = parseInt(document.getElementById('inputSteps').value) || 0;
+                    state.dailyStats.activeCalories = parseInt(document.getElementById('inputCalories').value) || 0;
+                    state.dailyStats.sleepHours = parseFloat(document.getElementById('inputSleep').value) || 0;
+                    saveState(true);
+                    refreshAllUI();
+                    manualModal.classList.add('hidden');
+                    showToast('تم تحديث إحصائيات اليوم يدوياً');
+                });
+            }
 
             const cloudModal = document.getElementById('cloudSyncModal');
-            document.getElementById('openCloudModalBtn').addEventListener('click', () => {
-                const cfg = getCloudConfig() || {};
-                document.getElementById('ghRepoInput').value = cfg.repo || '';
-                document.getElementById('ghPathInput').value = cfg.path || 'data.json';
-                document.getElementById('ghTokenInput').value = cfg.token || '';
-                cloudModal.classList.remove('hidden');
-            });
-            document.getElementById('closeCloudModal').addEventListener('click', () => cloudModal.classList.add('hidden'));
-            document.getElementById('cloudConfigForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                localStorage.setItem('gh_cloud_config_85', JSON.stringify({
-                    repo: document.getElementById('ghRepoInput').value.trim(),
-                    path: document.getElementById('ghPathInput').value.trim() || 'data.json',
-                    token: document.getElementById('ghTokenInput').value.trim()
-                }));
-                cloudModal.classList.add('hidden');
-                pushCloudData();
-                showToast('تم تفعيل المزامنة بين الجوالات ☁️');
-            });
-            document.getElementById('clearCloudConfigBtn').addEventListener('click', () => {
-                localStorage.removeItem('gh_cloud_config_85');
-                cloudModal.classList.add('hidden');
-            });
+            const openCloudBtn = document.getElementById('openCloudModalBtn');
+            if (openCloudBtn && cloudModal) {
+                openCloudBtn.addEventListener('click', () => {
+                    const cfg = getCloudConfig() || {};
+                    document.getElementById('ghRepoInput').value = cfg.repo || '';
+                    document.getElementById('ghPathInput').value = cfg.path || 'data.json';
+                    document.getElementById('ghTokenInput').value = cfg.token || '';
+                    cloudModal.classList.remove('hidden');
+                });
+            }
+
+            const closeCloudBtn = document.getElementById('closeCloudModal');
+            if (closeCloudBtn && cloudModal) {
+                closeCloudBtn.addEventListener('click', () => cloudModal.classList.add('hidden'));
+            }
+
+            const cloudForm = document.getElementById('cloudConfigForm');
+            if (cloudForm && cloudModal) {
+                cloudForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const cfg = {
+                        repo: document.getElementById('ghRepoInput').value.trim(),
+                        path: document.getElementById('ghPathInput').value.trim() || 'data.json',
+                        token: document.getElementById('ghTokenInput').value.trim()
+                    };
+                    localStorage.setItem('gh_cloud_config_85', JSON.stringify(cfg));
+                    cloudModal.classList.add('hidden');
+                    fetchCloudData();
+                    pushCloudData();
+                    showToast('تم تفعيل المزامنة المباشرة بين الجوالات ☁️');
+                });
+            }
+
+            const clearCloudBtn = document.getElementById('clearCloudConfigBtn');
+            if (clearCloudBtn && cloudModal) {
+                clearCloudBtn.addEventListener('click', () => {
+                    localStorage.removeItem('gh_cloud_config_85');
+                    cloudModal.classList.add('hidden');
+                    updateSyncBadge('local', 'وضع محلي');
+                    showToast('تم إلغاء الربط السحابي');
+                });
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             loadState();
-            document.getElementById('currentDateDisplay').textContent =
-                new Date().toLocaleDateString('ar-SA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const dateEl = document.getElementById('currentDateDisplay');
+            if (dateEl) {
+                dateEl.textContent = new Date().toLocaleDateString('ar-SA', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
             updateFridayCountdown();
+            setInterval(updateFridayCountdown, 60000);
             refreshAllUI();
             setupEvents();
             fetchCloudData();
+            // Live background polling every 20s
+            setInterval(fetchCloudData, 20000);
         });
     </script>
 </body>
