@@ -1,0 +1,78 @@
+:root[data-theme="cyber"] {
+    --bg-main: #060911;
+    --bg-card: rgba(15, 22, 38, 0.9);
+    --border-card: rgba(96, 239, 255, 0.22);
+    --accent-2: #60EFFF;
+    --radius-card: 16px;
+    --card-shadow: 0 0 30px -8px rgba(96, 239, 255, 0.2);
+    --bg-pattern: radial-gradient(circle at 15% 15%, rgba(96, 239, 255, 0.1) 0%, transparent 40%),
+                  radial-gradient(circle at 85% 10%, rgba(255, 0, 122, 0.1) 0%, transparent 40%),
+                  linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    --bg-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+}
+
+:root[data-theme="glass"] {
+    --bg-main: #0B0F17;
+    --bg-card: rgba(255, 255, 255, 0.045);
+    --border-card: rgba(255, 255, 255, 0.12);
+    --accent-2: #38BDF8;
+    --radius-card: 28px;
+    --card-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+    --bg-pattern: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.16) 0px, transparent 50%),
+                  radial-gradient(at 100% 20%, rgba(244, 114, 182, 0.15) 0px, transparent 50%),
+                  radial-gradient(at 50% 100%, rgba(52, 211, 153, 0.12) 0px, transparent 50%);
+    --bg-size: cover;
+}
+
+:root[data-theme="obsidian"] {
+    --bg-main: #09090B;
+    --bg-card: #121215;
+    --border-card: rgba(212, 175, 55, 0.25);
+    --accent-2: #F59E0B;
+    --radius-card: 12px;
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
+    --bg-pattern: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.08), transparent 60%);
+    --bg-size: cover;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--bg-main);
+    background-image: var(--bg-pattern);
+    background-size: var(--bg-size);
+    background-attachment: fixed;
+    color: #F8FAFC;
+    transition: background-color 0.4s ease;
+}
+
+.smart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.smart-card:hover { border-color: var(--accent-2); }
+
+@keyframes waveMove1 {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-25%); }
+    100% { transform: translateX(0); }
+}
+.wave-1 { animation: waveMove1 4s ease-in-out infinite; }
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(255, 0, 122, 0.4); }
+    50% { box-shadow: 0 0 28px rgba(255, 0, 122, 0.85); }
+}
+.active-burn-cell { animation: pulseGlow 2s infinite ease-in-out; }
+
+.ring-progress {
+    transition: stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
