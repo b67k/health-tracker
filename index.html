@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مسار الـ 85 | لوحة التحكم الذكية</title>
     
-    <!-- خطوط جوجل ومكتبة Tailwind -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,10 +22,10 @@
         }
     </script>
 
-    <!-- ملف التنسيقات الخارجي -->
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- تم تعديل المسار ليقرأ من نفس المجلد -->
+    <link rel="stylesheet" href="styles.css">
 
-    <!-- مكتبة Supabase عبر CDN -->
+    <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="min-h-screen p-3 sm:p-6 lg:p-8">
@@ -198,7 +197,7 @@
 
     </main>
 
-    <!-- نافذة تسجيل وزن الجمعة (Weigh-In Modal) -->
+    <!-- نافذة تسجيل وزن الجمعة -->
     <div id="weighInModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="smart-card max-w-md w-full p-6 border border-pink-500/40">
             <div class="flex justify-between items-center mb-4">
@@ -217,7 +216,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل إحصائيات اليوم (Manual Sync Modal) -->
+    <!-- نافذة تعديل إحصائيات اليوم -->
     <div id="manualSyncModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="smart-card max-w-md w-full p-6">
             <div class="flex justify-between items-center mb-4">
@@ -242,12 +241,12 @@
         </div>
     </div>
 
-    <!-- إشعار Toast للحفظ -->
+    <!-- إشعار Toast -->
     <div id="toastNotification" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 border border-emerald-400 text-emerald-300 font-bold px-5 py-3 rounded-2xl shadow-2xl text-xs sm:text-sm transition-all duration-300 opacity-0 pointer-events-none z-50">
         <span id="toastMessage">تم الحفظ بنجاح</span>
     </div>
 
-    <!-- السكربت البرمجي الرئيسي -->
-    <script src="js/app.js"></script>
+    <!-- تم تعديل المسار ليقرأ من نفس المجلد -->
+    <script src="app.js"></script>
 </body>
 </html>
