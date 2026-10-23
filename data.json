@@ -1,1 +1,27 @@
-{"calories":"322","weight":"107","steps":"2668","sleep":"13.5","date":"23 Oct 2026 at 6:30 PM"}
+{
+  "calories": 322,
+  "weight": 107.6,
+  "steps": 2668,
+  "sleep": 0,
+  "date": "23 Oct 2026 at 6:30 PM",
+  "waterCups": 6,
+  "athkarCount": 33,
+  "weighIns": [
+    {
+      "date": "البداية",
+      "weight": 110
+    },
+    {
+      "date": "الأسبوع 1",
+      "weight": 109.1
+    },
+    {
+      "date": "الأسبوع 2",
+      "weight": 108.3
+    },
+    {
+      "date": "الأسبوع 3",
+      "weight": 107.6
+    }
+  ]
+}
