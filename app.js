@@ -1,6 +1,6 @@
-// === إعدادات Supabase (ضع روابط مشروعك هنا) ===
-const SUPABASE_URL = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1dnNmb3Ryc3B1cnB3bWpra2d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NzAyMjgsImV4cCI6MjEwODM0NjIyOH0.i3jTpvxKhmnPFSs9JaVCIMNjZq2Rj7eZIl0CDENT6dk';
-const SUPABASE_KEY = 'sb_publishable_U5SMt6Om04Q2l9GK4C4SVA_koqepAWq';
+// === إعدادات Supabase الصحيحة لمشروعك ===
+const SUPABASE_URL = 'https://buvsfotrspurpwmjkkgw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1dnNmb3Ryc3B1cnB3bWpra2d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3NzAyMjgsImV4cCI6MjEwODM0NjIyOH0.i3jTpvxKhmnPFSs9JaVCIMNjZq2Rj7eZIl0CDENT6dk';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const INITIAL_STATE = {
@@ -18,7 +18,6 @@ const ATHKAR_LIST = [
 
 let state = { ...INITIAL_STATE };
 let currentDhikrIndex = 0;
-let currentVisualMode = 'matrix';
 
 // === إدارة الواجهة والمؤثرات ===
 function playChime(freq = 620) {
@@ -47,12 +46,12 @@ function setTheme(themeName) {
     localStorage.setItem('selected_theme_85', themeName);
 }
 
-function updateSyncBadge(statusText, isSyncing = false) {
+function updateSyncBadge(statusText, isSynced = false) {
     const txt = document.getElementById('syncStatusText');
     const badge = document.getElementById('syncStatusBadge');
     if (txt) txt.textContent = statusText;
     if (badge) {
-        badge.className = isSyncing 
+        badge.className = isSynced 
             ? "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30"
             : "flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20";
     }
@@ -64,35 +63,60 @@ function refreshAllUI() {
     if (dhikrEl) dhikrEl.textContent = `"${ATHKAR_LIST[currentDhikrIndex]}"`;
     const countEl = document.getElementById('athkarCounterDisplay');
     if (countEl) countEl.textContent = state.athkarCount;
+    const inSet = state.athkarCount % 33;
+    const setBadge = document.getElementById('athkarSetBadge');
+    if (setBadge) setBadge.textContent = `${inSet}/33`;
+    const ring = document.getElementById('athkarRing');
+    if (ring) ring.style.strokeDashoffset = 175.9 - (175.9 * (inSet / 33));
 
-    // تحديث الماء
+    // تحديث خزان الماء
     const waterPct = Math.min(100, Math.round((state.waterCups / state.waterGoalCups) * 100));
     const barEl = document.getElementById('waterLevelBar');
     if (barEl) barEl.style.height = `${Math.max(state.waterCups > 0 ? 12 : 0, waterPct)}%`;
     const litersEl = document.getElementById('waterLitersText');
     if (litersEl) litersEl.textContent = `${(state.waterCups * 0.25).toFixed(2)} L`;
+    const pctEl = document.getElementById('waterPercentageDisplay');
+    if (pctEl) pctEl.textContent = `${waterPct}%`;
+
+    // تحديث المقاييس
+    const stepsEl = document.getElementById('stepsCountDisplay');
+    if (stepsEl) stepsEl.textContent = Number(state.dailyStats.steps).toLocaleString('en-US');
+    const calEl = document.getElementById('activeCaloriesDisplay');
+    if (calEl) calEl.textContent = state.dailyStats.activeCalories;
+    const sleepEl = document.getElementById('sleepHoursDisplay');
+    if (sleepEl) sleepEl.textContent = state.dailyStats.sleepHours;
 }
 
-// === إدارة البيانات مع Supabase ===
+// === التعامل مع قاعدة بيانات Supabase ===
 async function saveState() {
     localStorage.setItem('health_85_state', JSON.stringify(state));
     refreshAllUI();
     try {
-        await supabase.from('user_tracker').upsert({ id: 'my_profile', data: state, updated_at: new Date() });
-        updateSyncBadge('متزامن لحظياً ✓', true);
+        const { error } = await supabase.from('user_tracker').upsert({ id: 'my_profile', data: state, updated_at: new Date() });
+        if (!error) {
+            updateSyncBadge('متزامن لحظياً ✓', true);
+        } else {
+            updateSyncBadge('خطأ في المزامنة');
+        }
     } catch (e) {
-        updateSyncBadge('خطأ في المزامنة');
+        updateSyncBadge('تعذر الاتصال');
     }
 }
 
 async function loadCloudData() {
     updateSyncBadge('جاري التحميل...');
-    const { data, error } = await supabase.from('user_tracker').select('data').eq('id', 'my_profile').single();
-    if (data && data.data) {
-        state = { ...INITIAL_STATE, ...data.data };
-        localStorage.setItem('health_85_state', JSON.stringify(state));
-        refreshAllUI();
-        updateSyncBadge('متزامن لحظياً ✓', true);
+    try {
+        const { data, error } = await supabase.from('user_tracker').select('data').eq('id', 'my_profile').single();
+        if (data && data.data) {
+            state = { ...INITIAL_STATE, ...data.data };
+            localStorage.setItem('health_85_state', JSON.stringify(state));
+            refreshAllUI();
+            updateSyncBadge('متزامن لحظياً ✓', true);
+        } else {
+            updateSyncBadge('متزامن محلياً');
+        }
+    } catch (e) {
+        updateSyncBadge('وضع غير متصل');
     }
 }
 
@@ -107,9 +131,9 @@ function subscribeToChanges() {
         }).subscribe();
 }
 
-// === ربط الأحداث (تم إصلاح خطأ الأقواس) ===
+// === ربط الأحداث والأزرار ===
 function setupEvents() {
-    // أحداث الأذكار (تم إزالة التكرار)
+    // الأذكار
     document.getElementById('dhikrClickBtn')?.addEventListener('click', () => {
         state.athkarCount++; saveState(); playChime(587);
     });
@@ -120,7 +144,7 @@ function setupEvents() {
         state.athkarCount = 0; saveState(); showToast('تم التصفير');
     });
 
-    // أحداث الماء
+    // مفاعل الماء
     document.getElementById('stepperPlusBtn')?.addEventListener('click', () => {
         state.waterCups = Math.min(30, state.waterCups + 1); saveState(); playChime(700);
     });
@@ -128,10 +152,10 @@ function setupEvents() {
         state.waterCups = Math.max(0, state.waterCups - 1); saveState();
     });
     document.getElementById('quickResetBtn')?.addEventListener('click', () => {
-        state.waterCups = 0; saveState();
+        state.waterCups = 0; saveState(); showToast('تم تصفير الماء');
     });
 
-    // أحداث النوافذ المنبثقة
+    // النوافذ المنبثقة
     const weighModal = document.getElementById('weighInModal');
     document.getElementById('openWeighInBtn')?.addEventListener('click', () => {
         document.getElementById('newWeightInput').value = state.currentWeight;
@@ -151,22 +175,47 @@ function setupEvents() {
         }
     });
 
-    // أحداث التزامن اليدوي
+    const manualModal = document.getElementById('manualSyncModal');
+    document.getElementById('openManualSyncBtn')?.addEventListener('click', () => {
+        document.getElementById('inputSteps').value = state.dailyStats.steps;
+        document.getElementById('inputCalories').value = state.dailyStats.activeCalories;
+        document.getElementById('inputSleep').value = state.dailyStats.sleepHours;
+        manualModal?.classList.remove('hidden');
+    });
+    document.getElementById('closeManualSyncModal')?.addEventListener('click', () => manualModal?.classList.add('hidden'));
+
+    document.getElementById('dailyStatsForm')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        state.dailyStats.steps = parseInt(document.getElementById('inputSteps').value) || 0;
+        state.dailyStats.activeCalories = parseInt(document.getElementById('inputCalories').value) || 0;
+        state.dailyStats.sleepHours = parseFloat(document.getElementById('inputSleep').value) || 0;
+        saveState();
+        manualModal?.classList.add('hidden');
+        showToast('تم حفظ الإحصائيات');
+    });
+
     document.getElementById('forceSyncBtn')?.addEventListener('click', () => {
-        loadCloudData(); showToast('تم سحب أحدث البيانات');
+        loadCloudData(); showToast('تم تحديث البيانات');
     });
 }
 
-// === التهيئة عند بدء التشغيل ===
+// === التشغيل الأولي ===
 window.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('selected_theme_85');
     if (savedTheme) setTheme(savedTheme);
-    
+
+    const dateEl = document.getElementById('currentDateDisplay');
+    if (dateEl) {
+        dateEl.textContent = new Date().toLocaleDateString('ar-SA', { 
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+    }
+
     const local = localStorage.getItem('health_85_state');
     if (local) state = { ...INITIAL_STATE, ...JSON.parse(local) };
-    
+
     refreshAllUI();
     setupEvents();
     loadCloudData();
-    subscribeToChanges(); // تشغيل الاستماع اللحظي لقاعدة البيانات
+    subscribeToChanges();
 });
